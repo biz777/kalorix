@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
 } from 'recharts'
 import { searchLocalFoods, cuisineFlags, cuisineLabels, type LocalFood } from '@/lib/foodDatabase'
 
@@ -30,6 +31,9 @@ const translations = {
     addMeal: '➕ Ajouter un repas',
     mealNamePlaceholder: 'Nom du repas (ex: Poulet riz)',
     caloriesPlaceholder: 'Calories',
+    protPlaceholder: 'Protéines (g)',
+    glucPlaceholder: 'Glucides (g)',
+    lipPlaceholder: 'Lipides (g)',
     add: 'Ajouter',
     adding: '...',
     todayMeals: '🍽️ Repas du jour',
@@ -63,6 +67,12 @@ const translations = {
     offResults: 'Résultats Open Food Facts',
     filterAll: 'Tous',
     portion: 'Portion',
+    macrosTitle: '🥩 Répartition Macros du jour',
+    macrosNoData: 'Ajoutez des repas avec macros pour voir la répartition.',
+    proteines: 'Protéines',
+    glucides: 'Glucides',
+    lipides: 'Lipides',
+    macrosOptional: 'Macros (optionnel)',
   },
   en: {
     title: 'Calorie Tracker 50+',
@@ -85,6 +95,9 @@ const translations = {
     addMeal: '➕ Add a meal',
     mealNamePlaceholder: 'Meal name (e.g. Chicken rice)',
     caloriesPlaceholder: 'Calories',
+    protPlaceholder: 'Protein (g)',
+    glucPlaceholder: 'Carbs (g)',
+    lipPlaceholder: 'Fat (g)',
     add: 'Add',
     adding: '...',
     todayMeals: "🍽️ Today's meals",
@@ -118,6 +131,12 @@ const translations = {
     offResults: 'Open Food Facts results',
     filterAll: 'All',
     portion: 'Serving',
+    macrosTitle: '🥩 Today\'s Macro Breakdown',
+    macrosNoData: 'Add meals with macros to see the breakdown.',
+    proteines: 'Protein',
+    glucides: 'Carbs',
+    lipides: 'Fat',
+    macrosOptional: 'Macros (optional)',
   },
   es: {
     title: 'Rastreador de calorías 50+',
@@ -140,6 +159,9 @@ const translations = {
     addMeal: '➕ Añadir comida',
     mealNamePlaceholder: 'Nombre de la comida (ej: Pollo arroz)',
     caloriesPlaceholder: 'Calorías',
+    protPlaceholder: 'Proteínas (g)',
+    glucPlaceholder: 'Carbohidratos (g)',
+    lipPlaceholder: 'Grasas (g)',
     add: 'Añadir',
     adding: '...',
     todayMeals: '🍽️ Comidas de hoy',
@@ -173,6 +195,12 @@ const translations = {
     offResults: 'Resultados Open Food Facts',
     filterAll: 'Todos',
     portion: 'Porción',
+    macrosTitle: '🥩 Distribución de Macros del día',
+    macrosNoData: 'Añade comidas con macros para ver la distribución.',
+    proteines: 'Proteínas',
+    glucides: 'Carbohidratos',
+    lipides: 'Grasas',
+    macrosOptional: 'Macros (opcional)',
   },
 }
 
@@ -184,6 +212,9 @@ interface Meal {
   calories: number
   created_at: string
   date?: string
+  proteines?: number
+  glucides?: number
+  lipides?: number
 }
 
 interface WeightLog {
@@ -192,6 +223,7 @@ interface WeightLog {
 }
 
 const CUISINE_ORDER: Array<LocalFood['cuisine'] | 'all'> = ['all', 'us', 'ca', 'ma', 'fr', 'it', 'mx', 'jp']
+const MACRO_COLORS = ['#667eea', '#f093fb', '#43e97b']
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -201,6 +233,9 @@ export default function DashboardPage() {
   const [meals, setMeals] = useState<Meal[]>([])
   const [nomRepas, setNomRepas] = useState('')
   const [caloriesRepas, setCaloriesRepas] = useState('')
+  const [proteinesRepas, setProteinesRepas] = useState('')
+  const [glucidesRepas, setGlucidesRepas] = useState('')
+  const [lipidesRepas, setLipidesRepas] = useState('')
   const [adding, setAdding] = useState(false)
   const [habituels, setHabituels] = useState<{ nom: string; calories: number }[]>([])
 
@@ -220,20 +255,17 @@ export default function DashboardPage() {
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([])
   const [weightPeriod, setWeightPeriod] = useState<7 | 15 | 30>(7)
 
-  // Calendrier
   const [calendarMonth, setCalendarMonth] = useState(new Date())
   const [calendarData, setCalendarData] = useState<Record<string, number>>({})
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [selectedDayMeals, setSelectedDayMeals] = useState<Meal[]>([])
 
-  // Search — Open Food Facts
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<{ name: string; calories: number; brand: string }[]>([])
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [searchDone, setSearchDone] = useState(false)
 
-  // Search — Bibliothèque locale
   const [localFoodResults, setLocalFoodResults] = useState<LocalFood[]>([])
   const [cuisineFilter, setCuisineFilter] = useState<LocalFood['cuisine'] | 'all'>('all')
 
@@ -275,7 +307,6 @@ export default function DashboardPage() {
       newLang === 'en' ? 'en-GB' : newLang === 'es' ? 'es-ES' : 'fr-FR',
       { weekday: 'long', day: 'numeric', month: 'long' }
     ))
-    // Relancer la recherche locale dans la nouvelle langue si query active
     if (searchQuery.trim().length >= 2) {
       setLocalFoodResults(searchLocalFoods(searchQuery, newLang))
     }
@@ -364,12 +395,20 @@ export default function DashboardPage() {
   const handleAddMeal = async () => {
     if (!nomRepas.trim() || !caloriesRepas) return
     setAdding(true)
-    const { error } = await supabase.from('meals').insert({
-      user_id: user.id, nom: nomRepas.trim(), calories: parseInt(caloriesRepas),
-    })
+    const insertData: any = {
+      user_id: user.id,
+      nom: nomRepas.trim(),
+      calories: parseInt(caloriesRepas),
+    }
+    if (proteinesRepas) insertData.proteines = parseInt(proteinesRepas)
+    if (glucidesRepas) insertData.glucides = parseInt(glucidesRepas)
+    if (lipidesRepas) insertData.lipides = parseInt(lipidesRepas)
+
+    const { error } = await supabase.from('meals').insert(insertData)
     if (error) console.error('Erreur ajout repas:', error.message)
     else {
       setNomRepas(''); setCaloriesRepas('')
+      setProteinesRepas(''); setGlucidesRepas(''); setLipidesRepas('')
       await fetchMeals(user.id)
       await fetchHabituels(user.id)
       await fetchCalendarData(user.id, calendarMonth)
@@ -418,12 +457,10 @@ export default function DashboardPage() {
 
   const handleCancelEdit = () => setEditingId(null)
 
-  // ─── Recherche hybride ───────────────────────────────────────────
   const handleSearchQueryChange = (val: string) => {
     setSearchQuery(val)
     setSearchDone(false)
     setSearchResults([])
-    // Recherche locale instantanée dès 2 caractères
     if (val.trim().length >= 2) {
       setLocalFoodResults(searchLocalFoods(val, langRef.current))
     } else {
@@ -433,19 +470,13 @@ export default function DashboardPage() {
 
   const handleFoodSearch = async () => {
     if (!searchQuery.trim()) return
-
-    // Recherche locale instantanée
     setLocalFoodResults(searchLocalFoods(searchQuery, langRef.current))
-
-    // Recherche Open Food Facts
     setSearching(true)
     setSearchError('')
     setSearchResults([])
     setSearchDone(false)
-
     const MAX_RETRIES = 3
     const TIMEOUT_MS = 8000
-
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
         const controller = new AbortController()
@@ -473,6 +504,7 @@ export default function DashboardPage() {
   const handleUseFood = (name: string, calories: number) => {
     setNomRepas(name)
     setCaloriesRepas(String(calories))
+    setProteinesRepas(''); setGlucidesRepas(''); setLipidesRepas('')
     setSearchResults([])
     setLocalFoodResults([])
     setSearchQuery('')
@@ -482,13 +514,15 @@ export default function DashboardPage() {
   const handleUseLocalFood = (food: LocalFood) => {
     setNomRepas(food.name[langRef.current])
     setCaloriesRepas(String(food.calories))
+    setProteinesRepas(food.proteines ? String(food.proteines) : '')
+    setGlucidesRepas(food.glucides ? String(food.glucides) : '')
+    setLipidesRepas(food.lipides ? String(food.lipides) : '')
     setSearchResults([])
     setLocalFoodResults([])
     setSearchQuery('')
     setSearchDone(false)
     setCuisineFilter('all')
   }
-  // ────────────────────────────────────────────────────────────────
 
   const handleSavePoids = async () => {
     if (!newPoids || isNaN(parseFloat(newPoids))) return
@@ -574,12 +608,23 @@ export default function DashboardPage() {
   const remaining = Math.max(tdee - totalCalories, 0)
   const progressColor = totalCalories > tdee ? '#ff6b6b' : totalCalories > tdee * 0.85 ? '#ffc107' : '#667eea'
 
-  // Filtre cuisine sur les résultats locaux
+  // ── Macros du jour ──────────────────────────────────────────────
+  const totalProteines = meals.reduce((s, m) => s + (m.proteines ?? 0), 0)
+  const totalGlucides  = meals.reduce((s, m) => s + (m.glucides  ?? 0), 0)
+  const totalLipides   = meals.reduce((s, m) => s + (m.lipides   ?? 0), 0)
+  const hasMacros = totalProteines + totalGlucides + totalLipides > 0
+
+  const macroData = [
+    { name: t.proteines, value: totalProteines, color: '#667eea' },
+    { name: t.glucides,  value: totalGlucides,  color: '#f093fb' },
+    { name: t.lipides,   value: totalLipides,   color: '#43e97b' },
+  ]
+  // ───────────────────────────────────────────────────────────────
+
   const filteredLocalResults = cuisineFilter === 'all'
     ? localFoodResults
     : localFoodResults.filter(f => f.cuisine === cuisineFilter)
 
-  // Cuisines présentes dans les résultats locaux actuels
   const cuisinesInResults = localFoodResults.length > 0
     ? (['all', ...new Set(localFoodResults.map(f => f.cuisine))] as Array<LocalFood['cuisine'] | 'all'>)
     : CUISINE_ORDER
@@ -657,7 +702,6 @@ export default function DashboardPage() {
         <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '32px 30px 26px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
           <div style={{ position: 'absolute', bottom: -40, left: -40, width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-          <div style={{ position: 'absolute', top: 20, left: '50%', transform: 'translateX(-50%)', width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
           <div style={{ textAlign: 'center', marginBottom: 20, position: 'relative' }}>
             <h1 style={{ color: 'white', fontSize: '3em', fontWeight: '800', margin: 0, letterSpacing: '-1px', textShadow: '0 3px 16px rgba(0,0,0,0.25)' }}>🥗 Kalorix</h1>
             <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: '0.88em', margin: '8px 0 0', letterSpacing: '0.3px' }}>{t.title} · {dateStr}</p>
@@ -675,6 +719,7 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
         <div style={{ padding: '28px 30px 0' }}>
 
         {/* Stats grid */}
@@ -711,6 +756,65 @@ export default function DashboardPage() {
             {totalCalories > tdee ? t.exceeded(totalCalories - tdee) : t.remainingToday(remaining)}
           </div>
         </div>
+
+        {/* ═══════ MACROS PIECHART ═══════ */}
+        <div style={cardStyle}>
+          <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.macrosTitle}</h2>
+          {hasMacros ? (
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
+              <ResponsiveContainer width={220} height={220}>
+                <PieChart>
+                  <Pie
+                    data={macroData}
+                    cx="50%" cy="50%"
+                    innerRadius={55} outerRadius={90}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {macroData.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number, name: string) => [`${value} g`, name]}
+                    contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ flex: 1, minWidth: 160 }}>
+                {macroData.map((m) => (
+                  <div key={m.name} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontWeight: '600', color: '#333', fontSize: '0.95em' }}>{m.name}</span>
+                        <span style={{ fontWeight: 'bold', color: m.color }}>{m.value} g</span>
+                      </div>
+                      <div style={{ height: 6, background: '#f0f0f0', borderRadius: 4, marginTop: 4, overflow: 'hidden' }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${Math.round((m.value / (totalProteines + totalGlucides + totalLipides)) * 100)}%`,
+                          background: m.color,
+                          borderRadius: 4,
+                          transition: 'width 0.5s',
+                        }} />
+                      </div>
+                      <div style={{ fontSize: '0.75em', color: '#aaa', marginTop: 2 }}>
+                        {Math.round((m.value / (totalProteines + totalGlucides + totalLipides)) * 100)}%
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ marginTop: 8, padding: '8px 14px', background: '#f8f9ff', borderRadius: 10, fontSize: '0.85em', color: '#666', textAlign: 'center' }}>
+                  Total : {totalProteines + totalGlucides + totalLipides} g
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p style={{ color: '#aaa', fontSize: '0.95em', textAlign: 'center', padding: '20px 0' }}>{t.macrosNoData}</p>
+          )}
+        </div>
+        {/* ═══════════════════════════════ */}
 
         {/* Calendrier & Historique */}
         <div style={cardStyle}>
@@ -844,34 +948,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════════════
-            RECHERCHE D'ALIMENTS — Section hybride
-        ════════════════════════════════════════════════════════ */}
+        {/* Recherche d'aliments */}
         <div style={cardStyle}>
           <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.searchTitle}</h2>
-
-          {/* Barre de recherche */}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
-            <input
-              type="text"
-              placeholder={t.searchPlaceholder}
-              value={searchQuery}
+            <input type="text" placeholder={t.searchPlaceholder} value={searchQuery}
               onChange={(e) => handleSearchQueryChange(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleFoodSearch()}
               onFocus={e => e.target.style.borderColor = '#667eea'}
               onBlur={e => e.target.style.borderColor = '#ede9f8'}
-              style={{ ...inputStyle, flex: 1, minWidth: 200 }}
-            />
-            <button
-              onClick={handleFoodSearch}
-              disabled={searching}
-              style={{ ...btnPrimaryStyle, opacity: searching ? 0.6 : 1 }}
-            >
+              style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
+            <button onClick={handleFoodSearch} disabled={searching}
+              style={{ ...btnPrimaryStyle, opacity: searching ? 0.6 : 1 }}>
               {searching ? t.searching : t.searchButton}
             </button>
           </div>
 
-          {/* ── BLOC 1 : Résultats locaux (instantanés) ── */}
           {localFoodResults.length > 0 && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
@@ -880,67 +972,35 @@ export default function DashboardPage() {
                 </span>
                 <span style={{ fontSize: '0.8em', color: '#aaa' }}>{localFoodResults.length} résultat{localFoodResults.length > 1 ? 's' : ''}</span>
               </div>
-
-              {/* Filtres par drapeau — uniquement les cuisines présentes */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
                 {cuisinesInResults.map((c) => {
                   const isActive = cuisineFilter === c
                   const flag = c === 'all' ? '🌍' : cuisineFlags[c]
                   const label = c === 'all' ? t.filterAll : cuisineLabels[c][lang]
                   return (
-                    <button
-                      key={c}
-                      onClick={() => setCuisineFilter(c)}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 4,
-                        padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                        fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                        fontWeight: isActive ? '700' : '500',
-                        background: isActive ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f0f0f8',
-                        color: isActive ? 'white' : '#555',
-                        transition: 'all 0.2s',
-                        boxShadow: isActive ? '0 2px 8px rgba(102,126,234,0.4)' : 'none',
-                      }}
-                    >
-                      <span>{flag}</span>
-                      <span>{label}</span>
+                    <button key={c} onClick={() => setCuisineFilter(c)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", fontWeight: isActive ? '700' : '500', background: isActive ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f0f0f8', color: isActive ? 'white' : '#555', transition: 'all 0.2s', boxShadow: isActive ? '0 2px 8px rgba(102,126,234,0.4)' : 'none' }}>
+                      <span>{flag}</span><span>{label}</span>
                     </button>
                   )
                 })}
               </div>
-
-              {/* Liste résultats locaux filtrés */}
               {filteredLocalResults.map((food) => (
-                <div key={food.id} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '10px 14px', background: '#f0f3ff', borderRadius: 10,
-                  border: '1px solid #dde3f8', marginBottom: 6, transition: 'all 0.2s',
-                }}>
+                <div key={food.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f0f3ff', borderRadius: 10, border: '1px solid #dde3f8', marginBottom: 6 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                       <span style={{ fontSize: 16 }}>{cuisineFlags[food.cuisine]}</span>
-                      <span style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em' }}>
-                        {food.name[lang]}
-                      </span>
+                      <span style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em' }}>{food.name[lang]}</span>
                     </div>
                     <div style={{ color: '#888', fontSize: '0.78em' }}>
                       {t.portion} : {food.portion[lang]}
+                      {food.proteines && <span style={{ marginLeft: 8, color: '#667eea' }}>P:{food.proteines}g G:{food.glucides}g L:{food.lipides}g</span>}
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 10, flexShrink: 0 }}>
-                    <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>
-                      {food.calories} kcal
-                    </span>
-                    <button
-                      onClick={() => handleUseLocalFood(food)}
-                      style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white', border: 'none', padding: '6px 14px',
-                        borderRadius: 8, cursor: 'pointer', fontWeight: 'bold',
-                        fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
+                    <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>{food.calories} kcal</span>
+                    <button onClick={() => handleUseLocalFood(food)}
+                      style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", whiteSpace: 'nowrap' }}>
                       {t.searchPreFill}
                     </button>
                   </div>
@@ -949,54 +1009,30 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── BLOC 2 : Résultats Open Food Facts ── */}
           {(searchResults.length > 0 || searchError || (searchDone && !searching)) && (
             <div>
               {searchResults.length > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <span style={{ fontSize: '0.78em', fontWeight: '700', color: '#555', background: '#f0f0f0', padding: '3px 10px', borderRadius: 20 }}>
-                    🌐 {t.offResults}
-                  </span>
+                  <span style={{ fontSize: '0.78em', fontWeight: '700', color: '#555', background: '#f0f0f0', padding: '3px 10px', borderRadius: 20 }}>🌐 {t.offResults}</span>
                   <span style={{ fontSize: '0.8em', color: '#aaa' }}>{searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}</span>
                 </div>
               )}
-
-              {searchError && (
-                <p style={{ color: '#e53935', fontSize: '0.9em', margin: '8px 0' }}>{searchError}</p>
-              )}
-
+              {searchError && <p style={{ color: '#e53935', fontSize: '0.9em', margin: '8px 0' }}>{searchError}</p>}
               {searchDone && searchResults.length === 0 && !searchError && (
                 <p style={{ color: '#999', fontSize: '0.9em', margin: '8px 0' }}>{t.searchNoResults}</p>
               )}
-
               {searchResults.map((item, idx) => (
-                <div key={idx} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '10px 14px', background: '#f8f9ff', borderRadius: 10,
-                  border: '1px solid #e8e0f8', marginBottom: 6, transition: 'all 0.2s',
-                }}>
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f8f9ff', borderRadius: 10, border: '1px solid #e8e0f8', marginBottom: 6 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {item.name}
-                    </div>
-                    {item.brand && (
-                      <div style={{ color: '#999', fontSize: '0.8em' }}>{item.brand}</div>
-                    )}
+                    <div style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                    {item.brand && <div style={{ color: '#999', fontSize: '0.8em' }}>{item.brand}</div>}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 10, flexShrink: 0 }}>
                     <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>
                       {item.calories} kcal <span style={{ color: '#aaa', fontWeight: 'normal', fontSize: '0.8em' }}>{t.searchPer100g}</span>
                     </span>
-                    <button
-                      onClick={() => handleUseFood(item.name, item.calories)}
-                      style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white', border: 'none', padding: '6px 14px',
-                        borderRadius: 8, cursor: 'pointer', fontWeight: 'bold',
-                        fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
+                    <button onClick={() => handleUseFood(item.name, item.calories)}
+                      style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", whiteSpace: 'nowrap' }}>
                       {t.searchPreFill}
                     </button>
                   </div>
@@ -1005,28 +1041,53 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-        {/* ═══════════════════════════════════════════════════════ */}
 
-        {/* Formulaire ajout repas */}
+        {/* ═══ Formulaire ajout repas + macros ═══ */}
         <div style={cardStyle}>
           <h2 style={{ color: '#333', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.addMeal}</h2>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {/* Ligne 1 : nom + calories */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
             <input type="text" placeholder={t.mealNamePlaceholder} value={nomRepas}
               onChange={(e) => setNomRepas(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddMeal()}
-              onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#e0e0e0'}
-              style={{ ...inputStyle, flex: 1, minWidth: 180 }} />
+              onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+              style={{ ...inputStyle, flex: 2, minWidth: 180 }} />
             <input type="number" placeholder={t.caloriesPlaceholder} value={caloriesRepas}
               onChange={(e) => setCaloriesRepas(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddMeal()}
-              onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#e0e0e0'}
+              onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
               style={{ ...inputStyle, width: 130 }} />
-            <button onClick={handleAddMeal} disabled={adding} style={{ ...btnPrimaryStyle, opacity: adding ? 0.6 : 1 }}>
-              {adding ? t.adding : t.add}
-            </button>
           </div>
+          {/* Ligne 2 : macros (optionnel) */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+            <div style={{ flex: 1, minWidth: 100, position: 'relative' }}>
+              <input type="number" placeholder={t.protPlaceholder} value={proteinesRepas}
+                onChange={(e) => setProteinesRepas(e.target.value)}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                style={{ ...inputStyle, paddingLeft: 36 }} />
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#667eea' }}>🥩</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 100, position: 'relative' }}>
+              <input type="number" placeholder={t.glucPlaceholder} value={glucidesRepas}
+                onChange={(e) => setGlucidesRepas(e.target.value)}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                style={{ ...inputStyle, paddingLeft: 36 }} />
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#f093fb' }}>🌾</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 100, position: 'relative' }}>
+              <input type="number" placeholder={t.lipPlaceholder} value={lipidesRepas}
+                onChange={(e) => setLipidesRepas(e.target.value)}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                style={{ ...inputStyle, paddingLeft: 36 }} />
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#43e97b' }}>🫒</span>
+            </div>
+          </div>
+          <button onClick={handleAddMeal} disabled={adding} style={{ ...btnPrimaryStyle, width: '100%', opacity: adding ? 0.6 : 1 }}>
+            {adding ? t.adding : t.add}
+          </button>
         </div>
+        {/* ══════════════════════════════════════ */}
 
         {/* Liste des repas du jour */}
-        <div style={cardStyle}>
+        <div style={{ ...cardStyle, marginBottom: 30 }}>
           <h2 style={{ color: '#333', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>
             {t.todayMeals}
             <span style={{ background: '#667eea', color: 'white', padding: '2px 8px', borderRadius: 12, fontSize: '0.75em', marginLeft: 8 }}>{meals.length}</span>
@@ -1057,7 +1118,16 @@ export default function DashboardPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, background: '#f8f9ff', borderRadius: 12, border: '2px solid #f0f0f0', transition: 'all 0.2s' }}
                       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#667eea'; (e.currentTarget as HTMLDivElement).style.background = '#f0f3ff' }}
                       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#f0f0f0'; (e.currentTarget as HTMLDivElement).style.background = '#f8f9ff' }}>
-                      <span onClick={() => handleEditClick(meal)} style={{ fontWeight: 'bold', color: '#333', cursor: 'pointer' }} title="Cliquer pour modifier">{meal.nom}</span>
+                      <div>
+                        <span onClick={() => handleEditClick(meal)} style={{ fontWeight: 'bold', color: '#333', cursor: 'pointer' }} title="Cliquer pour modifier">{meal.nom}</span>
+                        {(meal.proteines || meal.glucides || meal.lipides) && (
+                          <div style={{ fontSize: '0.75em', color: '#aaa', marginTop: 2 }}>
+                            {meal.proteines ? <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {meal.proteines}g</span> : null}
+                            {meal.glucides  ? <span style={{ color: '#f093fb', marginRight: 8 }}>🌾 {meal.glucides}g</span> : null}
+                            {meal.lipides   ? <span style={{ color: '#43e97b' }}>🫒 {meal.lipides}g</span> : null}
+                          </div>
+                        )}
+                      </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
                         <button onClick={() => handleDeleteClick(meal.id)} style={{ background: '#7e57c2', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
@@ -1070,7 +1140,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        </div>{/* fin padding */}
+        </div>
       </div>
     </div>
   )
