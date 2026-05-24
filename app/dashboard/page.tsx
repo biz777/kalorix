@@ -1057,14 +1057,38 @@ export default function DashboardPage() {
               style={{ ...inputStyle, width: 130 }} />
           </div>
           {/* Ligne 2 : macros (optionnel) */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-            <div style={{ flex: 1, minWidth: 100, position: 'relative' }}>
-              <input type="number" placeholder={t.protPlaceholder} value={proteinesRepas}
-                onChange={(e) => setProteinesRepas(e.target.value)}
-                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
-                style={{ ...inputStyle, paddingLeft: 36 }} />
-              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#667eea' }}>🥩</span>
-            </div>
+<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+  <div style={{ flex: 1, minWidth: 110 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+      <span style={{ fontSize: 22 }}>🥩</span>
+      <span style={{ fontSize: 13, fontWeight: '700', color: '#667eea' }}>{t.proteines}</span>
+    </div>
+    <input type="number" placeholder="g" value={proteinesRepas}
+      onChange={(e) => setProteinesRepas(e.target.value)}
+      onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+      style={{ ...inputStyle, textAlign: 'center' }} />
+  </div>
+  <div style={{ flex: 1, minWidth: 110 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+      <span style={{ fontSize: 22 }}>🌾</span>
+      <span style={{ fontSize: 13, fontWeight: '700', color: '#f093fb' }}>{t.glucides}</span>
+    </div>
+    <input type="number" placeholder="g" value={glucidesRepas}
+      onChange={(e) => setGlucidesRepas(e.target.value)}
+      onFocus={e => e.target.style.borderColor = '#f093fb'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+      style={{ ...inputStyle, textAlign: 'center' }} />
+  </div>
+  <div style={{ flex: 1, minWidth: 110 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+      <span style={{ fontSize: 22 }}>🫒</span>
+      <span style={{ fontSize: 13, fontWeight: '700', color: '#43e97b' }}>{t.lipides}</span>
+    </div>
+    <input type="number" placeholder="g" value={lipidesRepas}
+      onChange={(e) => setLipidesRepas(e.target.value)}
+      onFocus={e => e.target.style.borderColor = '#43e97b'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+      style={{ ...inputStyle, textAlign: 'center' }} />
+  </div>
+</div>
             <div style={{ flex: 1, minWidth: 100, position: 'relative' }}>
               <input type="number" placeholder={t.glucPlaceholder} value={glucidesRepas}
                 onChange={(e) => setGlucidesRepas(e.target.value)}
