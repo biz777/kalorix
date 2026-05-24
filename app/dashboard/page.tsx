@@ -776,7 +776,7 @@ export default function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number, name: string) => [`${value} g`, name]}
+                    formatter={(value) => [`${Number(value)} g`]}
                     contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12 }}
                   />
                 </PieChart>
