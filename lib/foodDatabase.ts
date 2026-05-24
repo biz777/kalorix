@@ -6,9 +6,12 @@ export interface LocalFood {
   id: string;
   cuisine: "us" | "ca" | "ma" | "fr" | "it" | "mx" | "jp";
   name: { fr: string; en: string; es: string };
-  calories: number;       // kcal pour la portion indiquée
-  portion: { fr: string; en: string; es: string }; // ex: "1 burger", "300g"
-  portionGrams: number;   // poids de référence en grammes
+  calories: number;
+  portion: { fr: string; en: string; es: string };
+  portionGrams: number;
+  proteines?: number;  // g
+  glucides?: number;   // g
+  lipides?: number;    // g
 }
 
 export const foodDatabase: LocalFood[] = [
@@ -23,6 +26,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 540,
     portion: { fr: "1 burger", en: "1 burger", es: "1 hamburguesa" },
     portionGrams: 200,
+    proteines: 28, glucides: 42, lipides: 27,
   },
   {
     id: "us-02",
@@ -31,6 +35,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 290,
     portion: { fr: "1 hot-dog", en: "1 hot dog", es: "1 hot dog" },
     portionGrams: 130,
+    proteines: 11, glucides: 28, lipides: 14,
   },
   {
     id: "us-03",
@@ -39,6 +44,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 420,
     portion: { fr: "1 portion (250g)", en: "1 serving (250g)", es: "1 porción (250g)" },
     portionGrams: 250,
+    proteines: 15, glucides: 55, lipides: 16,
   },
   {
     id: "us-04",
@@ -47,6 +53,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 520,
     portion: { fr: "3 pancakes", en: "3 pancakes", es: "3 panqueques" },
     portionGrams: 220,
+    proteines: 10, glucides: 85, lipides: 14,
   },
   {
     id: "us-05",
@@ -55,6 +62,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 310,
     portion: { fr: "1 bol (300g)", en: "1 bowl (300g)", es: "1 tazón (300g)" },
     portionGrams: 300,
+    proteines: 9, glucides: 18, lipides: 22,
   },
   {
     id: "us-06",
@@ -63,6 +71,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 480,
     portion: { fr: "6 ailes", en: "6 wings", es: "6 alitas" },
     portionGrams: 240,
+    proteines: 38, glucides: 8, lipides: 30,
   },
   {
     id: "us-07",
@@ -71,6 +80,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 390,
     portion: { fr: "1 sandwich", en: "1 sandwich", es: "1 sándwich" },
     portionGrams: 170,
+    proteines: 16, glucides: 34, lipides: 20,
   },
   {
     id: "us-08",
@@ -79,6 +89,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 620,
     portion: { fr: "1 portion (300g)", en: "1 serving (300g)", es: "1 porción (300g)" },
     portionGrams: 300,
+    proteines: 45, glucides: 22, lipides: 36,
   },
   {
     id: "us-09",
@@ -87,6 +98,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 560,
     portion: { fr: "1 sandwich", en: "1 sandwich", es: "1 sándwich" },
     portionGrams: 280,
+    proteines: 30, glucides: 45, lipides: 24,
   },
   {
     id: "us-10",
@@ -95,6 +107,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 400,
     portion: { fr: "1 part (125g)", en: "1 slice (125g)", es: "1 rebanada (125g)" },
     portionGrams: 125,
+    proteines: 7, glucides: 38, lipides: 24,
   },
   {
     id: "us-11",
@@ -103,6 +116,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 310,
     portion: { fr: "1 omelette", en: "1 omelette", es: "1 tortilla" },
     portionGrams: 200,
+    proteines: 22, glucides: 2, lipides: 24,
   },
   {
     id: "us-12",
@@ -111,6 +125,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 180,
     portion: { fr: "1 bol (300ml)", en: "1 bowl (300ml)", es: "1 tazón (300ml)" },
     portionGrams: 300,
+    proteines: 4, glucides: 26, lipides: 6,
   },
   {
     id: "us-13",
@@ -119,6 +134,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 440,
     portion: { fr: "1 sandwich", en: "1 sandwich", es: "1 sándwich" },
     portionGrams: 220,
+    proteines: 18, glucides: 38, lipides: 20,
   },
   {
     id: "us-14",
@@ -127,6 +143,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 280,
     portion: { fr: "2 cookies", en: "2 cookies", es: "2 galletas" },
     portionGrams: 80,
+    proteines: 3, glucides: 38, lipides: 14,
   },
   {
     id: "us-15",
@@ -135,6 +152,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 365,
     portion: { fr: "1 portion moyenne", en: "1 medium serving", es: "1 porción mediana" },
     portionGrams: 170,
+    proteines: 4, glucides: 48, lipides: 17,
   },
 
   // ────────────────────────────────────────────
@@ -147,6 +165,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 740,
     portion: { fr: "1 portion (400g)", en: "1 serving (400g)", es: "1 porción (400g)" },
     portionGrams: 400,
+    proteines: 22, glucides: 85, lipides: 36,
   },
   {
     id: "ca-02",
@@ -155,6 +174,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 430,
     portion: { fr: "1 part", en: "1 slice", es: "1 porción" },
     portionGrams: 200,
+    proteines: 20, glucides: 32, lipides: 24,
   },
   {
     id: "ca-03",
@@ -163,6 +183,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 460,
     portion: { fr: "2 crêpes", en: "2 crêpes", es: "2 crêpes" },
     portionGrams: 200,
+    proteines: 8, glucides: 72, lipides: 14,
   },
   {
     id: "ca-04",
@@ -171,6 +192,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 220,
     portion: { fr: "1 bol (300ml)", en: "1 bowl (300ml)", es: "1 tazón (300ml)" },
     portionGrams: 300,
+    proteines: 13, glucides: 32, lipides: 3,
   },
   {
     id: "ca-05",
@@ -179,6 +201,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 250,
     portion: { fr: "1 tarte", en: "1 tart", es: "1 tarta" },
     portionGrams: 75,
+    proteines: 3, glucides: 36, lipides: 11,
   },
   {
     id: "ca-06",
@@ -187,6 +210,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 310,
     portion: { fr: "1 part (100g)", en: "1 piece (100g)", es: "1 trozo (100g)" },
     portionGrams: 100,
+    proteines: 7, glucides: 50, lipides: 9,
   },
   {
     id: "ca-07",
@@ -195,6 +219,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 350,
     portion: { fr: "1 filet (200g)", en: "1 fillet (200g)", es: "1 filete (200g)" },
     portionGrams: 200,
+    proteines: 40, glucides: 0, lipides: 20,
   },
   {
     id: "ca-08",
@@ -203,6 +228,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 330,
     portion: { fr: "1 barre", en: "1 bar", es: "1 barra" },
     portionGrams: 90,
+    proteines: 4, glucides: 38, lipides: 18,
   },
 
   // ────────────────────────────────────────────
@@ -215,6 +241,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 480,
     portion: { fr: "1 portion (350g)", en: "1 serving (350g)", es: "1 porción (350g)" },
     portionGrams: 350,
+    proteines: 38, glucides: 22, lipides: 24,
   },
   {
     id: "ma-02",
@@ -223,6 +250,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 620,
     portion: { fr: "1 assiette (400g)", en: "1 plate (400g)", es: "1 plato (400g)" },
     portionGrams: 400,
+    proteines: 35, glucides: 72, lipides: 18,
   },
   {
     id: "ma-03",
@@ -231,6 +259,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 210,
     portion: { fr: "1 bol (350ml)", en: "1 bowl (350ml)", es: "1 tazón (350ml)" },
     portionGrams: 350,
+    proteines: 12, glucides: 28, lipides: 5,
   },
   {
     id: "ma-04",
@@ -239,6 +268,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 320,
     portion: { fr: "4 pièces", en: "4 pieces", es: "4 piezas" },
     portionGrams: 160,
+    proteines: 12, glucides: 28, lipides: 16,
   },
   {
     id: "ma-05",
@@ -247,6 +277,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 510,
     portion: { fr: "1 part", en: "1 slice", es: "1 porción" },
     portionGrams: 220,
+    proteines: 28, glucides: 42, lipides: 22,
   },
   {
     id: "ma-06",
@@ -255,6 +286,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 380,
     portion: { fr: "2 pièces", en: "2 pieces", es: "2 piezas" },
     portionGrams: 160,
+    proteines: 8, glucides: 52, lipides: 14,
   },
   {
     id: "ma-07",
@@ -263,6 +295,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 540,
     portion: { fr: "1 portion (250g)", en: "1 serving (250g)", es: "1 porción (250g)" },
     portionGrams: 250,
+    proteines: 48, glucides: 0, lipides: 36,
   },
   {
     id: "ma-08",
@@ -271,6 +304,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 180,
     portion: { fr: "1 pièce", en: "1 piece", es: "1 pieza" },
     portionGrams: 50,
+    proteines: 3, glucides: 22, lipides: 9,
   },
 
   // ────────────────────────────────────────────
@@ -283,6 +317,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 420,
     portion: { fr: "1 part", en: "1 slice", es: "1 porción" },
     portionGrams: 180,
+    proteines: 16, glucides: 22, lipides: 28,
   },
   {
     id: "fr-02",
@@ -291,6 +326,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 430,
     portion: { fr: "1 sandwich", en: "1 sandwich", es: "1 sándwich" },
     portionGrams: 200,
+    proteines: 22, glucides: 35, lipides: 22,
   },
   {
     id: "fr-03",
@@ -299,6 +335,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 280,
     portion: { fr: "1 bol (350ml)", en: "1 bowl (350ml)", es: "1 tazón (350ml)" },
     portionGrams: 350,
+    proteines: 12, glucides: 28, lipides: 12,
   },
   {
     id: "fr-04",
@@ -307,6 +344,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 490,
     portion: { fr: "1 assiette (300g)", en: "1 plate (300g)", es: "1 plato (300g)" },
     portionGrams: 300,
+    proteines: 38, glucides: 18, lipides: 24,
   },
   {
     id: "fr-05",
@@ -315,6 +353,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 180,
     portion: { fr: "1 assiette (300g)", en: "1 plate (300g)", es: "1 plato (300g)" },
     portionGrams: 300,
+    proteines: 4, glucides: 22, lipides: 8,
   },
   {
     id: "fr-06",
@@ -323,6 +362,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 270,
     portion: { fr: "1 croissant", en: "1 croissant", es: "1 croissant" },
     portionGrams: 80,
+    proteines: 5, glucides: 30, lipides: 14,
   },
   {
     id: "fr-07",
@@ -331,6 +371,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 350,
     portion: { fr: "1 part", en: "1 slice", es: "1 porción" },
     portionGrams: 150,
+    proteines: 4, glucides: 48, lipides: 16,
   },
   {
     id: "fr-08",
@@ -339,6 +380,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 290,
     portion: { fr: "2 crêpes", en: "2 crêpes", es: "2 crêpes" },
     portionGrams: 150,
+    proteines: 6, glucides: 38, lipides: 12,
   },
 
   // ────────────────────────────────────────────
@@ -351,6 +393,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 550,
     portion: { fr: "1 assiette (350g)", en: "1 plate (350g)", es: "1 plato (350g)" },
     portionGrams: 350,
+    proteines: 28, glucides: 65, lipides: 16,
   },
   {
     id: "it-02",
@@ -359,6 +402,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 500,
     portion: { fr: "2 parts", en: "2 slices", es: "2 porciones" },
     portionGrams: 260,
+    proteines: 20, glucides: 62, lipides: 16,
   },
   {
     id: "it-03",
@@ -367,6 +411,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 430,
     portion: { fr: "1 assiette (300g)", en: "1 plate (300g)", es: "1 plato (300g)" },
     portionGrams: 300,
+    proteines: 10, glucides: 68, lipides: 12,
   },
   {
     id: "it-04",
@@ -375,6 +420,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 490,
     portion: { fr: "1 part", en: "1 serving", es: "1 porción" },
     portionGrams: 280,
+    proteines: 24, glucides: 45, lipides: 22,
   },
   {
     id: "it-05",
@@ -383,6 +429,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 370,
     portion: { fr: "1 part (150g)", en: "1 serving (150g)", es: "1 porción (150g)" },
     portionGrams: 150,
+    proteines: 7, glucides: 38, lipides: 20,
   },
   {
     id: "it-06",
@@ -391,6 +438,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 220,
     portion: { fr: "2 pièces", en: "2 pieces", es: "2 piezas" },
     portionGrams: 120,
+    proteines: 6, glucides: 32, lipides: 7,
   },
   {
     id: "it-07",
@@ -399,6 +447,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 520,
     portion: { fr: "1 portion (300g)", en: "1 serving (300g)", es: "1 porción (300g)" },
     portionGrams: 300,
+    proteines: 42, glucides: 14, lipides: 28,
   },
   {
     id: "it-08",
@@ -407,6 +456,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 280,
     portion: { fr: "1 verrine (150g)", en: "1 serving (150g)", es: "1 porción (150g)" },
     portionGrams: 150,
+    proteines: 4, glucides: 28, lipides: 16,
   },
 
   // ────────────────────────────────────────────
@@ -419,6 +469,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 480,
     portion: { fr: "3 tacos", en: "3 tacos", es: "3 tacos" },
     portionGrams: 270,
+    proteines: 28, glucides: 48, lipides: 16,
   },
   {
     id: "mx-02",
@@ -427,6 +478,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 550,
     portion: { fr: "1 burrito", en: "1 burrito", es: "1 burrito" },
     portionGrams: 300,
+    proteines: 32, glucides: 58, lipides: 18,
   },
   {
     id: "mx-03",
@@ -435,6 +487,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 340,
     portion: { fr: "1 portion (200g)", en: "1 serving (200g)", es: "1 porción (200g)" },
     portionGrams: 200,
+    proteines: 4, glucides: 32, lipides: 22,
   },
   {
     id: "mx-04",
@@ -443,6 +496,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 490,
     portion: { fr: "2 enchiladas", en: "2 enchiladas", es: "2 enchiladas" },
     portionGrams: 280,
+    proteines: 30, glucides: 45, lipides: 20,
   },
   {
     id: "mx-05",
@@ -451,6 +505,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 400,
     portion: { fr: "1 quesadilla", en: "1 quesadilla", es: "1 quesadilla" },
     portionGrams: 200,
+    proteines: 18, glucides: 38, lipides: 20,
   },
   {
     id: "mx-06",
@@ -459,6 +514,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 420,
     portion: { fr: "2 tamales", en: "2 tamales", es: "2 tamales" },
     portionGrams: 220,
+    proteines: 14, glucides: 52, lipides: 16,
   },
   {
     id: "mx-07",
@@ -467,6 +523,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 300,
     portion: { fr: "1 bol (400ml)", en: "1 bowl (400ml)", es: "1 tazón (400ml)" },
     portionGrams: 400,
+    proteines: 20, glucides: 35, lipides: 7,
   },
   {
     id: "mx-08",
@@ -475,6 +532,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 310,
     portion: { fr: "3 churros", en: "3 churros", es: "3 churros" },
     portionGrams: 120,
+    proteines: 4, glucides: 42, lipides: 14,
   },
 
   // ────────────────────────────────────────────
@@ -487,6 +545,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 340,
     portion: { fr: "8 pièces", en: "8 pieces", es: "8 piezas" },
     portionGrams: 240,
+    proteines: 18, glucides: 48, lipides: 6,
   },
   {
     id: "jp-02",
@@ -495,6 +554,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 490,
     portion: { fr: "1 bol (400ml)", en: "1 bowl (400ml)", es: "1 tazón (400ml)" },
     portionGrams: 400,
+    proteines: 26, glucides: 62, lipides: 12,
   },
   {
     id: "jp-03",
@@ -503,6 +563,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 330,
     portion: { fr: "6 pièces", en: "6 pieces", es: "6 piezas" },
     portionGrams: 180,
+    proteines: 14, glucides: 32, lipides: 16,
   },
   {
     id: "jp-04",
@@ -511,6 +572,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 380,
     portion: { fr: "5 pièces", en: "5 pieces", es: "5 piezas" },
     portionGrams: 200,
+    proteines: 18, glucides: 35, lipides: 18,
   },
   {
     id: "jp-05",
@@ -519,6 +581,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 280,
     portion: { fr: "2 onigiri", en: "2 onigiri", es: "2 onigiri" },
     portionGrams: 200,
+    proteines: 6, glucides: 56, lipides: 2,
   },
   {
     id: "jp-06",
@@ -527,6 +590,7 @@ export const foodDatabase: LocalFood[] = [
     calories: 290,
     portion: { fr: "1 bol soupe + 150g riz", en: "1 bowl soup + 150g rice", es: "1 tazón sopa + 150g arroz" },
     portionGrams: 350,
+    proteines: 8, glucides: 52, lipides: 4,
   },
 ];
 
