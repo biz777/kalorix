@@ -608,18 +608,23 @@ export default function DashboardPage() {
   const remaining = Math.max(tdee - totalCalories, 0)
   const progressColor = totalCalories > tdee ? '#ff6b6b' : totalCalories > tdee * 0.85 ? '#ffc107' : '#667eea'
 
-  // ── Macros du jour ──────────────────────────────────────────────
-  const totalProteines = meals.reduce((s, m) => s + (m.proteines ?? 0), 0)
-  const totalGlucides  = meals.reduce((s, m) => s + (m.glucides  ?? 0), 0)
-  const totalLipides   = meals.reduce((s, m) => s + (m.lipides   ?? 0), 0)
-  const hasMacros = totalProteines + totalGlucides + totalLipides > 0
+// ── Macros du jour ──────────────────────────────────────────────
+const totalProteines = meals.reduce((s, m) => s + (m.proteines ?? 0), 0)
+const totalGlucides  = meals.reduce((s, m) => s + (m.glucides  ?? 0), 0)
+const totalLipides   = meals.reduce((s, m) => s + (m.lipides   ?? 0), 0)
+const hasMacros = totalProteines + totalGlucides + totalLipides > 0
 
-  const macroData = [
-    { name: t.proteines, value: totalProteines, color: '#667eea' },
-    { name: t.glucides,  value: totalGlucides,  color: '#f093fb' },
-    { name: t.lipides,   value: totalLipides,   color: '#43e97b' },
-  ]
-  // ───────────────────────────────────────────────────────────────
+const goalProteines = profile?.objectif_proteines ?? null
+const goalGlucides  = profile?.objectif_glucides  ?? null
+const goalLipides   = profile?.objectif_lipides   ?? null
+const hasGoals = goalProteines !== null && goalGlucides !== null && goalLipides !== null
+
+const macroData = [
+  { name: t.proteines, value: totalProteines, goal: goalProteines, color: '#667eea' },
+  { name: t.glucides,  value: totalGlucides,  goal: goalGlucides,  color: '#f093fb' },
+  { name: t.lipides,   value: totalLipides,   goal: goalLipides,   color: '#43e97b' },
+]
+// ───────────────────────────────────────────────────────────────
 
   const filteredLocalResults = cuisineFilter === 'all'
     ? localFoodResults
@@ -761,59 +766,60 @@ export default function DashboardPage() {
         <div style={cardStyle}>
           <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.macrosTitle}</h2>
           {hasMacros ? (
-            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
-              <ResponsiveContainer width={220} height={220}>
-                <PieChart>
-                  <Pie
-                    data={macroData}
-                    cx="50%" cy="50%"
-                    innerRadius={55} outerRadius={90}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {macroData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value) => [`${Number(value)} g`]}
-                    contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12 }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div style={{ flex: 1, minWidth: 160 }}>
-                {macroData.map((m) => (
-                  <div key={m.name} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                    <div style={{ width: 14, height: 14, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: '600', color: '#333', fontSize: '0.95em' }}>{m.name}</span>
-                        <span style={{ fontWeight: 'bold', color: m.color }}>{m.value} g</span>
-                      </div>
-                      <div style={{ height: 6, background: '#f0f0f0', borderRadius: 4, marginTop: 4, overflow: 'hidden' }}>
-                        <div style={{
-                          height: '100%',
-                          width: `${Math.round((m.value / (totalProteines + totalGlucides + totalLipides)) * 100)}%`,
-                          background: m.color,
-                          borderRadius: 4,
-                          transition: 'width 0.5s',
-                        }} />
-                      </div>
-                      <div style={{ fontSize: '0.75em', color: '#aaa', marginTop: 2 }}>
-                        {Math.round((m.value / (totalProteines + totalGlucides + totalLipides)) * 100)}%
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div style={{ marginTop: 8, padding: '8px 14px', background: '#f8f9ff', borderRadius: 10, fontSize: '0.85em', color: '#666', textAlign: 'center' }}>
-                  Total : {totalProteines + totalGlucides + totalLipides} g
-                </div>
+  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
+    <ResponsiveContainer width={220} height={220}>
+      <PieChart>
+        <Pie data={macroData} cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="value">
+          {macroData.map((entry, index) => (<Cell key={index} fill={entry.color} />))}
+        </Pie>
+        <Tooltip formatter={(value) => [`${Number(value)} g`]} contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12 }} />
+      </PieChart>
+    </ResponsiveContainer>
+    <div style={{ flex: 1, minWidth: 160 }}>
+      {macroData.map((m) => {
+        const totalMacros = totalProteines + totalGlucides + totalLipides
+        const pct = totalMacros > 0 ? Math.round((m.value / totalMacros) * 100) : 0
+        const barWidth = m.goal ? Math.min(Math.round((m.value / m.goal) * 100), 100) : pct
+        const overGoal = m.goal !== null && m.value > m.goal
+        const barColor = overGoal ? '#ff6b6b' : m.color
+        return (
+          <div key={m.name} style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
+                <span style={{ fontWeight: '600', color: '#333', fontSize: '0.95em' }}>{m.name}</span>
               </div>
+              <span style={{ fontWeight: 'bold', color: overGoal ? '#ff6b6b' : m.color, fontSize: '0.9em' }}>
+                {m.goal !== null ? `${m.value} g / ${m.goal} g` : `${m.value} g`}
+              </span>
             </div>
-          ) : (
-            <p style={{ color: '#aaa', fontSize: '0.95em', textAlign: 'center', padding: '20px 0' }}>{t.macrosNoData}</p>
-          )}
-        </div>
+            <div style={{ height: 8, background: '#f0f0f0', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${barWidth}%`, background: barColor, borderRadius: 4, transition: 'width 0.5s' }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
+              <span style={{ fontSize: '0.72em', color: '#bbb' }}>{pct}%</span>
+              {m.goal !== null && (
+                <span style={{ fontSize: '0.72em', color: overGoal ? '#ff6b6b' : '#bbb' }}>
+                  {overGoal ? `+${m.value - m.goal} g dépassé` : `${barWidth}% de l'objectif`}
+                </span>
+              )}
+            </div>
+          </div>
+        )
+      })}
+      <div style={{ marginTop: 4, padding: '8px 14px', background: '#f8f9ff', borderRadius: 10, fontSize: '0.85em', color: '#666', textAlign: 'center' }}>
+        Total : {totalProteines + totalGlucides + totalLipides} g
+        {hasGoals && (
+          <span style={{ color: '#aaa', marginLeft: 6 }}>
+            / {(goalProteines ?? 0) + (goalGlucides ?? 0) + (goalLipides ?? 0)} g objectif
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+) : (
+  <p style={{ color: '#aaa', fontSize: '0.95em', textAlign: 'center', padding: '20px 0' }}>{t.macrosNoData}</p>
+)}
         {/* ═══════════════════════════════ */}
 
         {/* Calendrier & Historique */}
