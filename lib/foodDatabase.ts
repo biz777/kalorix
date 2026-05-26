@@ -1,10 +1,10 @@
 // lib/foodDatabase.ts
 // Kalorix — Bibliothèque Cuisines du Monde
-// ~61 plats · calories pour portion standard · trilingue FR/EN/ES
+// ~110 plats · calories pour portion standard · trilingue FR/EN/ES
 
 export interface LocalFood {
   id: string;
-  cuisine: "us" | "ca" | "ma" | "fr" | "it" | "mx" | "jp";
+  cuisine: "daily" | "us" | "ca" | "ma" | "fr" | "it" | "mx" | "jp";
   name: { fr: string; en: string; es: string };
   calories: number;
   portion: { fr: string; en: string; es: string };
@@ -15,6 +15,290 @@ export interface LocalFood {
 }
 
 export const foodDatabase: LocalFood[] = [
+
+  // ────────────────────────────────────────────
+  // ⭐ QUOTIDIEN (~30 aliments)
+  // ────────────────────────────────────────────
+
+  // — Petit-déjeuner / Boissons
+  {
+    id: "daily-01",
+    cuisine: "daily",
+    name: { fr: "Café noir (sans sucre)", en: "Black Coffee (no sugar)", es: "Café negro (sin azúcar)" },
+    calories: 5,
+    portion: { fr: "1 tasse (240ml)", en: "1 cup (240ml)", es: "1 taza (240ml)" },
+    portionGrams: 240,
+    proteines: 0, glucides: 1, lipides: 0,
+  },
+  {
+    id: "daily-02",
+    cuisine: "daily",
+    name: { fr: "Café au lait", en: "Café au Lait", es: "Café con leche" },
+    calories: 60,
+    portion: { fr: "1 tasse (240ml)", en: "1 cup (240ml)", es: "1 taza (240ml)" },
+    portionGrams: 240,
+    proteines: 3, glucides: 6, lipides: 2,
+  },
+  {
+    id: "daily-03",
+    cuisine: "daily",
+    name: { fr: "Thé nature (sans sucre)", en: "Plain Tea (no sugar)", es: "Té solo (sin azúcar)" },
+    calories: 2,
+    portion: { fr: "1 tasse (240ml)", en: "1 cup (240ml)", es: "1 taza (240ml)" },
+    portionGrams: 240,
+    proteines: 0, glucides: 0, lipides: 0,
+  },
+  {
+    id: "daily-04",
+    cuisine: "daily",
+    name: { fr: "Lait demi-écrémé", en: "Semi-skimmed Milk", es: "Leche semidesnatada" },
+    calories: 110,
+    portion: { fr: "1 verre (250ml)", en: "1 glass (250ml)", es: "1 vaso (250ml)" },
+    portionGrams: 250,
+    proteines: 8, glucides: 12, lipides: 4,
+  },
+  {
+    id: "daily-05",
+    cuisine: "daily",
+    name: { fr: "Jus d'orange (pressé)", en: "Fresh Orange Juice", es: "Zumo de naranja natural" },
+    calories: 110,
+    portion: { fr: "1 verre (250ml)", en: "1 glass (250ml)", es: "1 vaso (250ml)" },
+    portionGrams: 250,
+    proteines: 2, glucides: 26, lipides: 0,
+  },
+
+  // — Œufs & Produits laitiers
+  {
+    id: "daily-06",
+    cuisine: "daily",
+    name: { fr: "Œuf à la coque", en: "Soft-boiled Egg", es: "Huevo pasado por agua" },
+    calories: 70,
+    portion: { fr: "1 œuf", en: "1 egg", es: "1 huevo" },
+    portionGrams: 50,
+    proteines: 6, glucides: 0, lipides: 5,
+  },
+  {
+    id: "daily-07",
+    cuisine: "daily",
+    name: { fr: "Œufs brouillés (x2)", en: "Scrambled Eggs (x2)", es: "Huevos revueltos (x2)" },
+    calories: 180,
+    portion: { fr: "2 œufs", en: "2 eggs", es: "2 huevos" },
+    portionGrams: 110,
+    proteines: 12, glucides: 1, lipides: 14,
+  },
+  {
+    id: "daily-08",
+    cuisine: "daily",
+    name: { fr: "Yaourt nature (125g)", en: "Plain Yogurt (125g)", es: "Yogur natural (125g)" },
+    calories: 70,
+    portion: { fr: "1 pot (125g)", en: "1 pot (125g)", es: "1 bote (125g)" },
+    portionGrams: 125,
+    proteines: 5, glucides: 8, lipides: 2,
+  },
+  {
+    id: "daily-09",
+    cuisine: "daily",
+    name: { fr: "Yaourt grec (150g)", en: "Greek Yogurt (150g)", es: "Yogur griego (150g)" },
+    calories: 130,
+    portion: { fr: "1 pot (150g)", en: "1 pot (150g)", es: "1 bote (150g)" },
+    portionGrams: 150,
+    proteines: 12, glucides: 6, lipides: 6,
+  },
+  {
+    id: "daily-10",
+    cuisine: "daily",
+    name: { fr: "Fromage blanc (100g)", en: "Fromage Blanc (100g)", es: "Queso blanco (100g)" },
+    calories: 75,
+    portion: { fr: "100g", en: "100g", es: "100g" },
+    portionGrams: 100,
+    proteines: 8, glucides: 5, lipides: 2,
+  },
+  {
+    id: "daily-11",
+    cuisine: "daily",
+    name: { fr: "Camembert (30g)", en: "Camembert (30g)", es: "Camembert (30g)" },
+    calories: 90,
+    portion: { fr: "1 portion (30g)", en: "1 serving (30g)", es: "1 porción (30g)" },
+    portionGrams: 30,
+    proteines: 5, glucides: 0, lipides: 7,
+  },
+  {
+    id: "daily-12",
+    cuisine: "daily",
+    name: { fr: "Fromage (emmental, 30g)", en: "Swiss Cheese (30g)", es: "Queso emmental (30g)" },
+    calories: 115,
+    portion: { fr: "1 tranche (30g)", en: "1 slice (30g)", es: "1 loncha (30g)" },
+    portionGrams: 30,
+    proteines: 8, glucides: 0, lipides: 9,
+  },
+
+  // — Pain & Céréales
+  {
+    id: "daily-13",
+    cuisine: "daily",
+    name: { fr: "Pain blanc (1 tranche)", en: "White Bread (1 slice)", es: "Pan blanco (1 rebanada)" },
+    calories: 80,
+    portion: { fr: "1 tranche (30g)", en: "1 slice (30g)", es: "1 rebanada (30g)" },
+    portionGrams: 30,
+    proteines: 3, glucides: 15, lipides: 1,
+  },
+  {
+    id: "daily-14",
+    cuisine: "daily",
+    name: { fr: "Pain complet (1 tranche)", en: "Wholemeal Bread (1 slice)", es: "Pan integral (1 rebanada)" },
+    calories: 70,
+    portion: { fr: "1 tranche (30g)", en: "1 slice (30g)", es: "1 rebanada (30g)" },
+    portionGrams: 30,
+    proteines: 3, glucides: 12, lipides: 1,
+  },
+  {
+    id: "daily-15",
+    cuisine: "daily",
+    name: { fr: "Flocons d'avoine (porridge)", en: "Oatmeal (porridge)", es: "Avena (porridge)" },
+    calories: 190,
+    portion: { fr: "1 bol (200g)", en: "1 bowl (200g)", es: "1 tazón (200g)" },
+    portionGrams: 200,
+    proteines: 6, glucides: 32, lipides: 4,
+  },
+  {
+    id: "daily-16",
+    cuisine: "daily",
+    name: { fr: "Riz blanc cuit (150g)", en: "Cooked White Rice (150g)", es: "Arroz blanco cocido (150g)" },
+    calories: 195,
+    portion: { fr: "1 portion (150g)", en: "1 serving (150g)", es: "1 porción (150g)" },
+    portionGrams: 150,
+    proteines: 4, glucides: 43, lipides: 0,
+  },
+  {
+    id: "daily-17",
+    cuisine: "daily",
+    name: { fr: "Pâtes cuites (200g)", en: "Cooked Pasta (200g)", es: "Pasta cocida (200g)" },
+    calories: 260,
+    portion: { fr: "1 assiette (200g)", en: "1 plate (200g)", es: "1 plato (200g)" },
+    portionGrams: 200,
+    proteines: 9, glucides: 52, lipides: 1,
+  },
+
+  // — Fruits
+  {
+    id: "daily-18",
+    cuisine: "daily",
+    name: { fr: "Banane", en: "Banana", es: "Plátano" },
+    calories: 90,
+    portion: { fr: "1 banane moyenne", en: "1 medium banana", es: "1 plátano mediano" },
+    portionGrams: 100,
+    proteines: 1, glucides: 23, lipides: 0,
+  },
+  {
+    id: "daily-19",
+    cuisine: "daily",
+    name: { fr: "Pomme", en: "Apple", es: "Manzana" },
+    calories: 80,
+    portion: { fr: "1 pomme moyenne", en: "1 medium apple", es: "1 manzana mediana" },
+    portionGrams: 150,
+    proteines: 0, glucides: 21, lipides: 0,
+  },
+  {
+    id: "daily-20",
+    cuisine: "daily",
+    name: { fr: "Orange", en: "Orange", es: "Naranja" },
+    calories: 65,
+    portion: { fr: "1 orange", en: "1 orange", es: "1 naranja" },
+    portionGrams: 130,
+    proteines: 1, glucides: 16, lipides: 0,
+  },
+  {
+    id: "daily-21",
+    cuisine: "daily",
+    name: { fr: "Fraises (200g)", en: "Strawberries (200g)", es: "Fresas (200g)" },
+    calories: 65,
+    portion: { fr: "1 bol (200g)", en: "1 bowl (200g)", es: "1 tazón (200g)" },
+    portionGrams: 200,
+    proteines: 1, glucides: 15, lipides: 0,
+  },
+  {
+    id: "daily-22",
+    cuisine: "daily",
+    name: { fr: "Dattes (x5)", en: "Dates (x5)", es: "Dátiles (x5)" },
+    calories: 140,
+    portion: { fr: "5 dattes", en: "5 dates", es: "5 dátiles" },
+    portionGrams: 50,
+    proteines: 1, glucides: 36, lipides: 0,
+  },
+
+  // — Snacks & Divers
+  {
+    id: "daily-23",
+    cuisine: "daily",
+    name: { fr: "Amandes (30g)", en: "Almonds (30g)", es: "Almendras (30g)" },
+    calories: 175,
+    portion: { fr: "1 poignée (30g)", en: "1 handful (30g)", es: "1 puñado (30g)" },
+    portionGrams: 30,
+    proteines: 6, glucides: 5, lipides: 15,
+  },
+  {
+    id: "daily-24",
+    cuisine: "daily",
+    name: { fr: "Noix (30g)", en: "Walnuts (30g)", es: "Nueces (30g)" },
+    calories: 195,
+    portion: { fr: "1 poignée (30g)", en: "1 handful (30g)", es: "1 puñado (30g)" },
+    portionGrams: 30,
+    proteines: 5, glucides: 4, lipides: 19,
+  },
+  {
+    id: "daily-25",
+    cuisine: "daily",
+    name: { fr: "Chocolat noir (30g)", en: "Dark Chocolate (30g)", es: "Chocolate negro (30g)" },
+    calories: 165,
+    portion: { fr: "3 carrés (30g)", en: "3 squares (30g)", es: "3 onzas (30g)" },
+    portionGrams: 30,
+    proteines: 2, glucides: 14, lipides: 11,
+  },
+  {
+    id: "daily-26",
+    cuisine: "daily",
+    name: { fr: "Barre de céréales", en: "Cereal Bar", es: "Barrita de cereales" },
+    calories: 130,
+    portion: { fr: "1 barre (40g)", en: "1 bar (40g)", es: "1 barrita (40g)" },
+    portionGrams: 40,
+    proteines: 2, glucides: 22, lipides: 4,
+  },
+  {
+    id: "daily-27",
+    cuisine: "daily",
+    name: { fr: "Beurre de cacahuète (1 c.s.)", en: "Peanut Butter (1 tbsp)", es: "Mantequilla de cacahuete (1 cda)" },
+    calories: 95,
+    portion: { fr: "1 cuillère à soupe (16g)", en: "1 tablespoon (16g)", es: "1 cucharada (16g)" },
+    portionGrams: 16,
+    proteines: 4, glucides: 3, lipides: 8,
+  },
+  {
+    id: "daily-28",
+    cuisine: "daily",
+    name: { fr: "Avocat (demi)", en: "Avocado (half)", es: "Aguacate (medio)" },
+    calories: 120,
+    portion: { fr: "1/2 avocat", en: "1/2 avocado", es: "1/2 aguacate" },
+    portionGrams: 100,
+    proteines: 1, glucides: 6, lipides: 11,
+  },
+  {
+    id: "daily-29",
+    cuisine: "daily",
+    name: { fr: "Poulet grillé (blanc, 150g)", en: "Grilled Chicken Breast (150g)", es: "Pechuga de pollo a la plancha (150g)" },
+    calories: 230,
+    portion: { fr: "1 blanc (150g)", en: "1 breast (150g)", es: "1 pechuga (150g)" },
+    portionGrams: 150,
+    proteines: 43, glucides: 0, lipides: 5,
+  },
+  {
+    id: "daily-30",
+    cuisine: "daily",
+    name: { fr: "Thon en boîte (100g, égoutté)", en: "Canned Tuna (100g, drained)", es: "Atún en lata (100g, escurrido)" },
+    calories: 120,
+    portion: { fr: "1/2 boîte (100g)", en: "1/2 can (100g)", es: "1/2 lata (100g)" },
+    portionGrams: 100,
+    proteines: 26, glucides: 0, lipides: 1,
+  },
 
   // ────────────────────────────────────────────
   // 🇺🇸 AMÉRICAINE (~15 plats)
@@ -232,7 +516,7 @@ export const foodDatabase: LocalFood[] = [
   },
 
   // ────────────────────────────────────────────
-  // 🇲🇦 MAROCAINE (~8 plats)
+  // 🇲🇦 MAROCAINE (~18 plats)
   // ────────────────────────────────────────────
   {
     id: "ma-01",
@@ -305,6 +589,96 @@ export const foodDatabase: LocalFood[] = [
     portion: { fr: "1 pièce", en: "1 piece", es: "1 pieza" },
     portionGrams: 50,
     proteines: 3, glucides: 22, lipides: 9,
+  },
+  {
+    id: "ma-09",
+    cuisine: "ma",
+    name: { fr: "Khobz (pain marocain)", en: "Khobz (Moroccan bread)", es: "Khobz (pan marroquí)" },
+    calories: 220,
+    portion: { fr: "1 petit pain (100g)", en: "1 loaf (100g)", es: "1 pan pequeño (100g)" },
+    portionGrams: 100,
+    proteines: 7, glucides: 44, lipides: 2,
+    },
+  {
+    id: "ma-10",
+    cuisine: "ma",
+    name: { fr: "Bissara (soupe de fèves)", en: "Bissara (fava bean soup)", es: "Bissara (sopa de habas)" },
+    calories: 180,
+    portion: { fr: "1 bol (300ml)", en: "1 bowl (300ml)", es: "1 tazón (300ml)" },
+    portionGrams: 300,
+    proteines: 10, glucides: 24, lipides: 5,
+  },
+  {
+    id: "ma-11",
+    cuisine: "ma",
+    name: { fr: "Zaalouk (salade d'aubergines)", en: "Zaalouk (eggplant salad)", es: "Zaalouk (ensalada de berenjena)" },
+    calories: 130,
+    portion: { fr: "1 portion (150g)", en: "1 serving (150g)", es: "1 porción (150g)" },
+    portionGrams: 150,
+    proteines: 2, glucides: 12, lipides: 8,
+  },
+  {
+    id: "ma-12",
+    cuisine: "ma",
+    name: { fr: "Kefta grillée (boulettes, x5)", en: "Grilled Kefta (meatballs, x5)", es: "Kefta a la plancha (albóndigas, x5)" },
+    calories: 340,
+    portion: { fr: "5 boulettes", en: "5 meatballs", es: "5 albóndigas" },
+    portionGrams: 200,
+    proteines: 28, glucides: 4, lipides: 22,
+  },
+  {
+    id: "ma-13",
+    cuisine: "ma",
+    name: { fr: "Sfenj (beignets, x3)", en: "Sfenj (doughnuts, x3)", es: "Sfenj (buñuelos, x3)" },
+    calories: 310,
+    portion: { fr: "3 sfenj", en: "3 doughnuts", es: "3 buñuelos" },
+    portionGrams: 150,
+    proteines: 6, glucides: 42, lipides: 13,
+  },
+  {
+    id: "ma-14",
+    cuisine: "ma",
+    name: { fr: "Sellou (sucrerie aux amandes)", en: "Sellou (almond sweet)", es: "Sellou (dulce de almendras)" },
+    calories: 210,
+    portion: { fr: "1 portion (60g)", en: "1 serving (60g)", es: "1 porción (60g)" },
+    portionGrams: 60,
+    proteines: 5, glucides: 22, lipides: 12,
+  },
+  {
+    id: "ma-15",
+    cuisine: "ma",
+    name: { fr: "Maakouda (galette de pomme de terre, x2)", en: "Maakouda (potato patty, x2)", es: "Maakouda (tortita de patata, x2)" },
+    calories: 280,
+    portion: { fr: "2 galettes", en: "2 patties", es: "2 tortitas" },
+    portionGrams: 180,
+    proteines: 6, glucides: 36, lipides: 12,
+  },
+  {
+    id: "ma-16",
+    cuisine: "ma",
+    name: { fr: "Couscous tfaya (raisins + oignons)", en: "Couscous Tfaya (raisins + onions)", es: "Cuscús tfaya (pasas + cebollas)" },
+    calories: 580,
+    portion: { fr: "1 assiette (380g)", en: "1 plate (380g)", es: "1 plato (380g)" },
+    portionGrams: 380,
+    proteines: 22, glucides: 88, lipides: 14,
+  },
+  {
+    id: "ma-17",
+    cuisine: "ma",
+    name: { fr: "Loubia (haricots blancs en sauce)", en: "Loubia (white bean stew)", es: "Loubia (estofado de judías blancas)" },
+    calories: 240,
+    portion: { fr: "1 bol (300g)", en: "1 bowl (300g)", es: "1 tazón (300g)" },
+    portionGrams: 300,
+    proteines: 12, glucides: 36, lipides: 5,
+  },
+  {
+    id: "ma-18",
+    cuisine: "ma",
+    name: { fr: "Thé à la menthe (avec sucre)", en: "Mint Tea (with sugar)", es: "Té a la menta (con azúcar)" },
+    calories: 60,
+    portion: { fr: "1 verre (200ml)", en: "1 glass (200ml)", es: "1 vaso (200ml)" },
+    portionGrams: 200,
+    proteines: 0, glucides: 15, lipides: 0,
   },
 
   // ────────────────────────────────────────────
@@ -622,6 +996,7 @@ export function getFoodsByCuisine(cuisine: LocalFood["cuisine"]): LocalFood[] {
 
 /** Map emoji drapeaux */
 export const cuisineFlags: Record<LocalFood["cuisine"], string> = {
+  daily: "⭐",
   us: "🇺🇸",
   ca: "🇨🇦",
   ma: "🇲🇦",
@@ -633,6 +1008,7 @@ export const cuisineFlags: Record<LocalFood["cuisine"], string> = {
 
 /** Labels traduits pour les filtres par cuisine */
 export const cuisineLabels: Record<LocalFood["cuisine"], Record<Lang, string>> = {
+  daily: { fr: "Quotidien", en: "Everyday", es: "Cotidiano" },
   us: { fr: "Américaine", en: "American", es: "Americana" },
   ca: { fr: "Canadienne", en: "Canadian", es: "Canadiense" },
   ma: { fr: "Marocaine", en: "Moroccan", es: "Marroquí" },
