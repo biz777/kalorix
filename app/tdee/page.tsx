@@ -67,7 +67,6 @@ function calculerTDEE(
 export default function TDEEPage() {
   const router = useRouter()
 
-  // Créer le client Supabase une seule fois
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -90,13 +89,9 @@ export default function TDEEPage() {
   // Résultat calculé en temps réel
   const result = calculerTDEE(age, poids, taille, sexe, activite, objectif)
 
-  // Récupérer l'user ID au chargement de la page
   useEffect(() => {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getSession()
-      console.log('INIT SESSION:', JSON.stringify(data?.session?.user?.id))
-      console.log('INIT ERROR:', JSON.stringify(error))
-
       if (!data?.session?.user) {
         router.push('/login')
         return
@@ -113,24 +108,10 @@ export default function TDEEPage() {
     setError(null)
     setSaved(false)
 
-    console.log('USER ID au moment du save:', userId)
-
     if (!userId) {
-      console.log('Pas de userId — redirection login')
       router.push('/login')
       return
     }
-
-    console.log('DATA À ENVOYER:', {
-      id:              userId,
-      age,
-      poids,
-      taille,
-      sexe,
-      niveau_activite: activite,
-      objectif,
-      tdee:            result.tdee,
-    })
 
     const { data, error: upsertError } = await supabase
       .from('profiles')
@@ -143,12 +124,13 @@ export default function TDEEPage() {
         niveau_activite: activite,
         objectif,
         tdee:            result.tdee,
+        // ✅ NOUVEAU : sauvegarde des objectifs macros calculés
+        objectif_proteines: result.proteines,
+        objectif_glucides:  result.glucides,
+        objectif_lipides:   result.lipides,
         updated_at:      new Date().toISOString(),
       })
       .select()
-
-    console.log('UPSERT DATA:', JSON.stringify(data))
-    console.log('UPSERT ERROR:', JSON.stringify(upsertError))
 
     setLoading(false)
 
@@ -307,6 +289,11 @@ export default function TDEEPage() {
               <p className="text-lg font-semibold text-amber-700">{result.lipides} g</p>
             </div>
           </div>
+
+          {/* ✅ NOUVEAU : note explicative */}
+          <p className="text-xs text-gray-400 mt-3 text-center">
+            Ces objectifs macros seront sauvegardés et affichés dans ton dashboard.
+          </p>
         </div>
 
         {/* ── Messages ── */}
