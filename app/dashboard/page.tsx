@@ -79,7 +79,7 @@ const translations = {
     macroGoalsSaved: '✅ Objectifs sauvegardés !',
     macroGoalsSaving: '...',
     macroGoalsSave: 'Sauvegarder',
-    macroGoalsReset: '🔄 Recalculer depuis mon TDEE',
+    macroGoalsReset: '🔄 Réinitialiser les valeurs recommandées',
     macroGoalsHint: 'Modifiez vos objectifs selon votre évolution.',
   },
   en: {
@@ -151,7 +151,7 @@ const translations = {
     macroGoalsSaved: '✅ Goals saved!',
     macroGoalsSaving: '...',
     macroGoalsSave: 'Save',
-    macroGoalsReset: '🔄 Recalculate from my TDEE',
+    macroGoalsReset: '🔄 Reset to recommended values',
     macroGoalsHint: 'Adjust your goals as you progress.',
   },
   es: {
@@ -223,7 +223,7 @@ const translations = {
     macroGoalsSaved: '✅ ¡Objetivos guardados!',
     macroGoalsSaving: '...',
     macroGoalsSave: 'Guardar',
-    macroGoalsReset: '🔄 Recalcular desde mi TDEE',
+    macroGoalsReset: '🔄 Restablecer los valores recomendados',
     macroGoalsHint: 'Ajusta tus objetivos según tu evolución.',
   },
 }
