@@ -344,7 +344,9 @@ export const foodDatabase: LocalFood[] = [
     portion: { fr: "6 pièces (330g)", en: "6 pieces (330g)", es: "6 piezas (330g)" },
     portionGrams: 330,
     proteines: 20, glucides: 2, lipides: 22,
-  },
+},
+  {
+    id: "daily-30",
     cuisine: "daily",
     name: { fr: "Thon en boîte (100g, égoutté)", en: "Canned Tuna (100g, drained)", es: "Atún en lata (100g, escurrido)" },
     calories: 120,
