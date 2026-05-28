@@ -291,7 +291,15 @@ export const foodDatabase: LocalFood[] = [
     proteines: 43, glucides: 0, lipides: 5,
   },
   {
-    id: "daily-30",// — Nouveaux ajouts Session 15
+   id: "daily-30",
+    cuisine: "daily",
+    name: { fr: "Thon en boîte (100g, égoutté)", en: "Canned Tuna (100g, drained)", es: "Atún en lata (100g, escurrido)" },
+    calories: 120,
+    portion: { fr: "1/2 boîte (100g)", en: "1/2 can (100g)", es: "1/2 lata (100g)" },
+    portionGrams: 100,
+    proteines: 26, glucides: 0, lipides: 1,
+  },
+  // — Nouveaux ajouts Session 15
   {
     id: "daily-31",
     cuisine: "daily",
