@@ -268,6 +268,10 @@ export default function DashboardPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editNom, setEditNom] = useState('')
   const [editCalories, setEditCalories] = useState('')
+  // ✅ NOUVEAU — états macros pour l'édition
+  const [editProteines, setEditProteines] = useState('')
+  const [editGlucides, setEditGlucides] = useState('')
+  const [editLipides, setEditLipides] = useState('')
 
   const [dateStr, setDateStr] = useState('')
   const [lang, setLang] = useState<Lang>('fr')
@@ -292,7 +296,6 @@ export default function DashboardPage() {
   const [localFoodResults, setLocalFoodResults] = useState<LocalFood[]>([])
   const [cuisineFilter, setCuisineFilter] = useState<LocalFood['cuisine'] | 'all'>('all')
 
-  // ✅ NOUVEAU — état objectifs macros modifiables
   const [editGoalProt, setEditGoalProt] = useState('')
   const [editGoalGluc, setEditGoalGluc] = useState('')
   const [editGoalLip,  setEditGoalLip]  = useState('')
@@ -320,7 +323,6 @@ export default function DashboardPage() {
       if (error) console.error('Erreur profil:', error.message)
       if (!profileData || !profileData.tdee) { router.push('/tdee'); return }
       setProfile(profileData)
-      // ✅ Pré-remplir les champs objectifs
       setEditGoalProt(String(profileData.objectif_proteines ?? ''))
       setEditGoalGluc(String(profileData.objectif_glucides  ?? ''))
       setEditGoalLip( String(profileData.objectif_lipides   ?? ''))
@@ -476,21 +478,38 @@ export default function DashboardPage() {
     setPendingDelete(null)
   }
 
+  // ✅ MODIFIÉ — pré-remplit aussi les macros
   const handleEditClick = (meal: Meal) => {
-    setEditingId(meal.id); setEditNom(meal.nom); setEditCalories(String(meal.calories))
+    setEditingId(meal.id)
+    setEditNom(meal.nom)
+    setEditCalories(String(meal.calories))
+    setEditProteines(meal.proteines ? String(meal.proteines) : '')
+    setEditGlucides(meal.glucides ? String(meal.glucides) : '')
+    setEditLipides(meal.lipides ? String(meal.lipides) : '')
   }
 
+  // ✅ MODIFIÉ — sauvegarde aussi les macros
   const handleSaveEdit = async () => {
     if (!editNom.trim() || !editCalories) return
-    const { error } = await supabase.from('meals')
-      .update({ nom: editNom.trim(), calories: parseInt(editCalories) }).eq('id', editingId)
+    const updateData: any = {
+      nom: editNom.trim(),
+      calories: parseInt(editCalories),
+      proteines: editProteines ? parseInt(editProteines) : null,
+      glucides:  editGlucides  ? parseInt(editGlucides)  : null,
+      lipides:   editLipides   ? parseInt(editLipides)   : null,
+    }
+    const { error } = await supabase.from('meals').update(updateData).eq('id', editingId)
     if (!error) { await fetchMeals(user.id); await fetchHabituels(user.id) }
     setEditingId(null)
+    setEditProteines(''); setEditGlucides(''); setEditLipides('')
   }
 
-  const handleCancelEdit = () => setEditingId(null)
+  // ✅ MODIFIÉ — reset aussi les macros
+  const handleCancelEdit = () => {
+    setEditingId(null)
+    setEditProteines(''); setEditGlucides(''); setEditLipides('')
+  }
 
-  // ✅ NOUVEAU — Sauvegarder objectifs macros manuellement
   const handleSaveGoals = async () => {
     if (!editGoalProt || !editGoalGluc || !editGoalLip) return
     setSavingGoals(true)
@@ -516,7 +535,6 @@ export default function DashboardPage() {
     setSavingGoals(false)
   }
 
-  // ✅ NOUVEAU — Recalculer depuis le TDEE
   const handleResetGoals = () => {
     if (!profile?.tdee || !profile?.poids) return
     const prot = Math.round(profile.poids * 2)
@@ -656,7 +674,6 @@ export default function DashboardPage() {
   const remaining = Math.max(tdee - totalCalories, 0)
   const progressColor = totalCalories > tdee ? '#ff6b6b' : totalCalories > tdee * 0.85 ? '#ffc107' : '#667eea'
 
-  // ── Macros du jour ──────────────────────────────────────────────
   const totalProteines = meals.reduce((s, m) => s + (m.proteines ?? 0), 0)
   const totalGlucides  = meals.reduce((s, m) => s + (m.glucides  ?? 0), 0)
   const totalLipides   = meals.reduce((s, m) => s + (m.lipides   ?? 0), 0)
@@ -672,7 +689,6 @@ export default function DashboardPage() {
     { name: t.glucides,  value: totalGlucides,  goal: goalGlucides,  color: '#f093fb' },
     { name: t.lipides,   value: totalLipides,   goal: goalLipides,   color: '#43e97b' },
   ]
-  // ───────────────────────────────────────────────────────────────
 
   const filteredLocalResults = cuisineFilter === 'all'
     ? localFoodResults
@@ -808,7 +824,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ═══════ MACROS PIECHART ═══════ */}
+          {/* MACROS PIECHART */}
           <div style={cardStyle}>
             <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.macrosTitle}</h2>
             {hasMacros ? (
@@ -864,7 +880,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* ═══════ OBJECTIFS MACROS MODIFIABLES ═══════ */}
+          {/* OBJECTIFS MACROS MODIFIABLES */}
           <div style={cardStyle}>
             <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 6 }}>{t.macroGoalsTitle}</h2>
             <p style={{ color: '#aaa', fontSize: '0.85em', marginBottom: 18 }}>{t.macroGoalsHint}</p>
@@ -906,7 +922,6 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
-          {/* ══════════════════════════════════════════ */}
 
           {/* Calendrier & Historique */}
           <div style={cardStyle}>
@@ -1158,11 +1173,36 @@ export default function DashboardPage() {
                 {meals.map((meal) => (
                   <div key={meal.id} style={{ marginBottom: 8 }}>
                     {editingId === meal.id ? (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', background: '#f8f9ff', border: '2px solid #667eea', borderRadius: 12, padding: 12 }}>
-                        <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} style={{ ...inputStyle, flex: 1, minWidth: 140 }} />
-                        <input type="number" value={editCalories} onChange={(e) => setEditCalories(e.target.value)} style={{ ...inputStyle, width: 110 }} />
-                        <button onClick={handleSaveEdit} style={btnPrimaryStyle}>{t.savEdit}</button>
-                        <button onClick={handleCancelEdit} style={{ ...btnPrimaryStyle, background: '#e0e0e0', color: '#666' }}>{t.cancelEdit}</button>
+                      // ✅ NOUVEAU formulaire d'édition avec macros
+                      <div style={{ background: '#f8f9ff', border: '2px solid #667eea', borderRadius: 12, padding: 14 }}>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                          <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)}
+                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                            style={{ ...inputStyle, flex: 2, minWidth: 140 }} />
+                          <input type="number" placeholder="kcal" value={editCalories} onChange={(e) => setEditCalories(e.target.value)}
+                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                            style={{ ...inputStyle, width: 100 }} />
+                        </div>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                          {[
+                            { emoji: '🥩', color: '#667eea', val: editProteines, set: setEditProteines, ph: t.protPlaceholder },
+                            { emoji: '🌾', color: '#f093fb', val: editGlucides,  set: setEditGlucides,  ph: t.glucPlaceholder },
+                            { emoji: '🫒', color: '#43e97b', val: editLipides,   set: setEditLipides,   ph: t.lipPlaceholder  },
+                          ].map(({ emoji, color, val, set, ph }) => (
+                            <div key={ph} style={{ flex: 1, minWidth: 90 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                                <span style={{ fontSize: 16 }}>{emoji}</span>
+                              </div>
+                              <input type="number" placeholder={ph} value={val} onChange={(e) => set(e.target.value)}
+                                onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                style={{ ...inputStyle, textAlign: 'center' }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button onClick={handleSaveEdit} style={{ ...btnPrimaryStyle, flex: 1, textAlign: 'center' }}>{t.savEdit}</button>
+                          <button onClick={handleCancelEdit} style={{ ...btnPrimaryStyle, background: '#e0e0e0', color: '#666', boxShadow: 'none', flex: 1, textAlign: 'center' }}>{t.cancelEdit}</button>
+                        </div>
                       </div>
                     ) : pendingDelete === meal.id ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff3f3', border: '2px solid #ffcdd2', borderRadius: 12, padding: '12px 15px' }}>
@@ -1174,7 +1214,7 @@ export default function DashboardPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#667eea'; (e.currentTarget as HTMLDivElement).style.background = '#f0f3ff' }}
                         onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#f0f0f0'; (e.currentTarget as HTMLDivElement).style.background = '#f8f9ff' }}>
                         <div>
-                          <span onClick={() => handleEditClick(meal)} style={{ fontWeight: 'bold', color: '#333', cursor: 'pointer' }}>{meal.nom}</span>
+                          <span style={{ fontWeight: 'bold', color: '#333' }}>{meal.nom}</span>
                           {(meal.proteines || meal.glucides || meal.lipides) && (
                             <div style={{ fontSize: '0.75em', color: '#aaa', marginTop: 2 }}>
                               {meal.proteines ? <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {meal.proteines}g</span> : null}
@@ -1183,9 +1223,13 @@ export default function DashboardPage() {
                             </div>
                           )}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
-                          <button onClick={() => handleDeleteClick(meal.id)} style={{ background: '#7e57c2', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
+                          {/* ✅ NOUVEAU — bouton ✏️ dédié */}
+                          <button onClick={() => handleEditClick(meal)}
+                            style={{ background: '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", fontWeight: 'bold', fontSize: 14 }}>✏️</button>
+                          <button onClick={() => handleDeleteClick(meal.id)}
+                            style={{ background: '#7e57c2', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
                         </div>
                       </div>
                     )}
