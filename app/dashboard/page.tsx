@@ -827,7 +827,7 @@ export default function DashboardPage() {
           <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
               <span style={{ fontWeight: 'bold', color: '#667eea', fontSize: '1.1em' }}>{totalCalories} {t.consumed}</span>
-              <span style={{ color: '#666' }}>{t.goal} : {tdee} kcal</span>
+              <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '1.1em' }}>{t.goal} : {tdee} kcal</span>
             </div>
             <div style={{ width: '100%', height: 30, background: '#f0f0f0', borderRadius: 15, overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${progress}%`, background: `linear-gradient(90deg, ${progressColor} 0%, #764ba2 100%)`, transition: 'width 0.5s', borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10, color: 'white', fontWeight: 'bold', fontSize: '0.9em' }}>
@@ -863,9 +863,9 @@ export default function DashboardPage() {
                 </>
               ) : (
                 <button onClick={() => { setEditTdeeValue(String(tdee)); setEditingTdee(true) }}
-                  style={{ background: 'none', border: '1px dashed #ccc', color: '#aaa', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#667eea'; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#ccc'; (e.currentTarget as HTMLButtonElement).style.color = '#aaa' }}>
+                  style={{ background: 'linear-gradient(135deg, #f0f3ff 0%, #e8ecff 100%)', border: '2px solid #667eea', color: '#667eea', padding: '8px 18px', borderRadius: 10, cursor: 'pointer', fontSize: '0.95em', fontWeight: '700', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; (e.currentTarget as HTMLButtonElement).style.color = 'white' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #f0f3ff 0%, #e8ecff 100%)'; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}>
                   ✏️ {lang === 'en' ? 'Edit goal' : lang === 'es' ? 'Editar objetivo' : "Modifier l'objectif"}
                 </button>
               )}
@@ -917,9 +917,9 @@ export default function DashboardPage() {
                       </div>
                     )
                   })}
-                  <div style={{ marginTop: 4, padding: '8px 14px', background: '#f8f9ff', borderRadius: 10, fontSize: '0.85em', color: '#666', textAlign: 'center' }}>
+                  <div style={{ marginTop: 4, padding: '10px 14px', background: '#f0f3ff', borderRadius: 10, fontSize: '1em', fontWeight: '700', color: '#444', textAlign: 'center' }}>
                     Total : {totalProteines + totalGlucides + totalLipides} g
-                    {hasGoals && <span style={{ color: '#aaa', marginLeft: 6 }}>/ {(goalProteines ?? 0) + (goalGlucides ?? 0) + (goalLipides ?? 0)} g {t.goal.toLowerCase()}</span>}
+                    {hasGoals && <span style={{ color: '#764ba2', marginLeft: 6 }}>/ {(goalProteines ?? 0) + (goalGlucides ?? 0) + (goalLipides ?? 0)} g {t.goal.toLowerCase()}</span>}
                   </div>
                 </div>
               </div>
