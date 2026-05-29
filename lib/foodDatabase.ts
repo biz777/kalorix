@@ -1,6 +1,6 @@
 // lib/foodDatabase.ts
 // Kalorix — Bibliothèque Cuisines du Monde
-// ~110 plats · calories pour portion standard · trilingue FR/EN/ES
+// ~116 plats · calories pour portion standard · trilingue FR/EN/ES
 
 export interface LocalFood {
   id: string;
@@ -17,10 +17,9 @@ export interface LocalFood {
 export const foodDatabase: LocalFood[] = [
 
   // ────────────────────────────────────────────
-  // ⭐ QUOTIDIEN (~30 aliments)
+  // ⭐ QUOTIDIEN (~36 aliments)
   // ────────────────────────────────────────────
 
-  // — Petit-déjeuner / Boissons
   {
     id: "daily-01",
     cuisine: "daily",
@@ -66,8 +65,6 @@ export const foodDatabase: LocalFood[] = [
     portionGrams: 250,
     proteines: 2, glucides: 26, lipides: 0,
   },
-
-  // — Œufs & Produits laitiers
   {
     id: "daily-06",
     cuisine: "daily",
@@ -131,8 +128,6 @@ export const foodDatabase: LocalFood[] = [
     portionGrams: 30,
     proteines: 8, glucides: 0, lipides: 9,
   },
-
-  // — Pain & Céréales
   {
     id: "daily-13",
     cuisine: "daily",
@@ -178,8 +173,6 @@ export const foodDatabase: LocalFood[] = [
     portionGrams: 200,
     proteines: 9, glucides: 52, lipides: 1,
   },
-
-  // — Fruits
   {
     id: "daily-18",
     cuisine: "daily",
@@ -225,8 +218,6 @@ export const foodDatabase: LocalFood[] = [
     portionGrams: 50,
     proteines: 1, glucides: 36, lipides: 0,
   },
-
-  // — Snacks & Divers
   {
     id: "daily-23",
     cuisine: "daily",
@@ -291,7 +282,7 @@ export const foodDatabase: LocalFood[] = [
     proteines: 43, glucides: 0, lipides: 5,
   },
   {
-   id: "daily-30",
+    id: "daily-30",
     cuisine: "daily",
     name: { fr: "Thon en boîte (100g, égoutté)", en: "Canned Tuna (100g, drained)", es: "Atún en lata (100g, escurrido)" },
     calories: 120,
@@ -344,19 +335,10 @@ export const foodDatabase: LocalFood[] = [
     portion: { fr: "6 pièces (330g)", en: "6 pieces (330g)", es: "6 piezas (330g)" },
     portionGrams: 330,
     proteines: 20, glucides: 2, lipides: 22,
-},
-  {
-    id: "daily-30",
-    cuisine: "daily",
-    name: { fr: "Thon en boîte (100g, égoutté)", en: "Canned Tuna (100g, drained)", es: "Atún en lata (100g, escurrido)" },
-    calories: 120,
-    portion: { fr: "1/2 boîte (100g)", en: "1/2 can (100g)", es: "1/2 lata (100g)" },
-    portionGrams: 100,
-    proteines: 26, glucides: 0, lipides: 1,
   },
 
   // ────────────────────────────────────────────
-  // 🇺🇸 AMÉRICAINE (~15 plats)
+  // 🇺🇸 AMÉRICAINE (~16 plats)
   // ────────────────────────────────────────────
   {
     id: "us-01",
@@ -485,7 +467,16 @@ export const foodDatabase: LocalFood[] = [
     proteines: 3, glucides: 38, lipides: 14,
   },
   {
-    id: "us-15",{
+    id: "us-15",
+    cuisine: "us",
+    name: { fr: "French Fries (portion moyenne)", en: "French Fries (medium)", es: "Papas fritas (mediana)" },
+    calories: 365,
+    portion: { fr: "1 portion moyenne", en: "1 medium serving", es: "1 porción mediana" },
+    portionGrams: 170,
+    proteines: 4, glucides: 48, lipides: 17,
+  },
+  // — Nouveau ajout Session 15
+  {
     id: "us-16",
     cuisine: "us",
     name: { fr: "Maxi Cheese Burger", en: "Maxi Cheeseburger", es: "Maxi Hamburguesa con queso" },
@@ -493,13 +484,6 @@ export const foodDatabase: LocalFood[] = [
     portion: { fr: "1 burger", en: "1 burger", es: "1 hamburguesa" },
     portionGrams: 130,
     proteines: 14, glucides: 24, lipides: 11,
-  },
-    cuisine: "us",
-    name: { fr: "French Fries (portion moyenne)", en: "French Fries (medium)", es: "Papas fritas (mediana)" },
-    calories: 365,
-    portion: { fr: "1 portion moyenne", en: "1 medium serving", es: "1 porción mediana" },
-    portionGrams: 170,
-    proteines: 4, glucides: 48, lipides: 17,
   },
 
   // ────────────────────────────────────────────
@@ -661,7 +645,7 @@ export const foodDatabase: LocalFood[] = [
     portion: { fr: "1 petit pain (100g)", en: "1 loaf (100g)", es: "1 pan pequeño (100g)" },
     portionGrams: 100,
     proteines: 7, glucides: 44, lipides: 2,
-    },
+  },
   {
     id: "ma-10",
     cuisine: "ma",
@@ -1037,27 +1021,18 @@ export const foodDatabase: LocalFood[] = [
 
 export type Lang = "fr" | "en" | "es";
 
-/** Recherche dans la bibliothèque locale (insensible à la casse, accents). */
 export function searchLocalFoods(query: string, lang: Lang): LocalFood[] {
   if (!query || query.trim().length < 2) return [];
-
   const normalize = (s: string) =>
-    s
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-
+    s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const q = normalize(query.trim());
-
   return foodDatabase.filter((food) => normalize(food.name[lang]).includes(q));
 }
 
-/** Retourne tous les plats d'une cuisine donnée. */
 export function getFoodsByCuisine(cuisine: LocalFood["cuisine"]): LocalFood[] {
   return foodDatabase.filter((f) => f.cuisine === cuisine);
 }
 
-/** Map emoji drapeaux */
 export const cuisineFlags: Record<LocalFood["cuisine"], string> = {
   daily: "⭐",
   us: "🇺🇸",
@@ -1069,7 +1044,6 @@ export const cuisineFlags: Record<LocalFood["cuisine"], string> = {
   jp: "🇯🇵",
 };
 
-/** Labels traduits pour les filtres par cuisine */
 export const cuisineLabels: Record<LocalFood["cuisine"], Record<Lang, string>> = {
   daily: { fr: "Quotidien", en: "Everyday", es: "Cotidiano" },
   us: { fr: "Américaine", en: "American", es: "Americana" },
