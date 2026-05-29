@@ -302,6 +302,10 @@ export default function DashboardPage() {
   const [savingGoals,  setSavingGoals]  = useState(false)
   const [goalsSaved,   setGoalsSaved]   = useState(false)
 
+  // ✅ NOUVEAU — objectif calorique modifiable
+  const [editingTdee,   setEditingTdee]   = useState(false)
+  const [editTdeeValue, setEditTdeeValue] = useState('')
+
   const t = translations[lang]
 
   useEffect(() => {
@@ -543,6 +547,17 @@ export default function DashboardPage() {
     setEditGoalProt(String(prot))
     setEditGoalGluc(String(gluc))
     setEditGoalLip(String(lip))
+  }
+
+  // ✅ NOUVEAU — sauvegarde TDEE modifié depuis le dashboard
+  const handleSaveTdee = async () => {
+    const val = parseInt(editTdeeValue)
+    if (!val || val < 500 || val > 10000) return
+    const { error } = await supabase.from('profiles').update({ tdee: val }).eq('id', user.id)
+    if (!error) {
+      setProfile((prev: any) => ({ ...prev, tdee: val }))
+      setEditingTdee(false)
+    }
   }
 
   const handleSearchQueryChange = (val: string) => {
@@ -821,6 +836,39 @@ export default function DashboardPage() {
             </div>
             <div style={{ marginTop: 12, padding: 10, borderRadius: 10, textAlign: 'center', background: totalCalories > tdee ? '#ffebee' : '#e8f5e9', color: totalCalories > tdee ? '#c62828' : '#2e7d32', fontWeight: 500, fontSize: '0.95em' }}>
               {totalCalories > tdee ? t.exceeded(totalCalories - tdee) : t.remainingToday(remaining)}
+            </div>
+
+            {/* ✏️ NOUVEAU — Objectif calorique modifiable */}
+            <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+              {editingTdee ? (
+                <>
+                  <input
+                    type="number"
+                    value={editTdeeValue}
+                    onChange={(e) => setEditTdeeValue(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTdee()}
+                    min={500} max={10000}
+                    autoFocus
+                    style={{ width: 110, padding: '6px 10px', borderRadius: 8, border: '2px solid #667eea', fontSize: '0.95em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none', textAlign: 'center' }}
+                  />
+                  <span style={{ color: '#999', fontSize: '0.85em' }}>kcal</span>
+                  <button onClick={handleSaveTdee}
+                    style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                    ✅
+                  </button>
+                  <button onClick={() => setEditingTdee(false)}
+                    style={{ background: '#e0e0e0', color: '#666', border: 'none', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                    ✕
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => { setEditTdeeValue(String(tdee)); setEditingTdee(true) }}
+                  style={{ background: 'none', border: '1px dashed #ccc', color: '#aaa', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#667eea'; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#ccc'; (e.currentTarget as HTMLButtonElement).style.color = '#aaa' }}>
+                  ✏️ {lang === 'en' ? 'Edit goal' : lang === 'es' ? 'Editar objetivo' : "Modifier l'objectif"}
+                </button>
+              )}
             </div>
           </div>
 
