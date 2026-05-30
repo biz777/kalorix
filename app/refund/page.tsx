@@ -16,8 +16,8 @@ export default function Refund() {
       <h2>4. Exceptions</h2>
       <p>Aucun remboursement ne sera accordé après 7 jours d'utilisation payante ou en cas d'abus avéré du service.</p>
 
-      <h2>5. Contact</h2>
-      <p>Pour toute demande de remboursement : <a href="mailto:daousa777@gmail.com" style={{ color: "#667eea" }}>daousa777@gmail.com</a></p>
+     <h2>5. Contact</h2>
+      <p>For any refund requests, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSdI8IYoNx3iy6Z1-Or67H_6lEw7AjaABpBHnkHPv7SVfN6qxQ/viewform" style={{ color: "#667eea" }}>contact us here</a>.</p>
     </main>
   );
 }
