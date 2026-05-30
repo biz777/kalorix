@@ -268,10 +268,17 @@ export default function DashboardPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editNom, setEditNom] = useState('')
   const [editCalories, setEditCalories] = useState('')
-  // ✅ NOUVEAU — états macros pour l'édition
   const [editProteines, setEditProteines] = useState('')
   const [editGlucides, setEditGlucides] = useState('')
   const [editLipides, setEditLipides] = useState('')
+
+  // ✅ NOUVEAU — édition depuis l'historique calendrier
+  const [historyEditingId, setHistoryEditingId] = useState<string | null>(null)
+  const [historyEditNom, setHistoryEditNom] = useState('')
+  const [historyEditCalories, setHistoryEditCalories] = useState('')
+  const [historyEditProteines, setHistoryEditProteines] = useState('')
+  const [historyEditGlucides, setHistoryEditGlucides] = useState('')
+  const [historyEditLipides, setHistoryEditLipides] = useState('')
 
   const [dateStr, setDateStr] = useState('')
   const [lang, setLang] = useState<Lang>('fr')
@@ -302,7 +309,6 @@ export default function DashboardPage() {
   const [savingGoals,  setSavingGoals]  = useState(false)
   const [goalsSaved,   setGoalsSaved]   = useState(false)
 
-  // ✅ NOUVEAU — objectif calorique modifiable
   const [editingTdee,   setEditingTdee]   = useState(false)
   const [editTdeeValue, setEditTdeeValue] = useState('')
 
@@ -413,6 +419,7 @@ export default function DashboardPage() {
   const handleDayClick = async (dateStr: string) => {
     if (selectedDay === dateStr) { setSelectedDay(null); return }
     setSelectedDay(dateStr)
+    setHistoryEditingId(null)
     await fetchDayMeals(user.id, dateStr)
   }
 
@@ -420,6 +427,7 @@ export default function DashboardPage() {
     const newMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + delta, 1)
     setCalendarMonth(newMonth)
     setSelectedDay(null)
+    setHistoryEditingId(null)
     await fetchCalendarData(user.id, newMonth)
   }
 
@@ -482,7 +490,6 @@ export default function DashboardPage() {
     setPendingDelete(null)
   }
 
-  // ✅ MODIFIÉ — pré-remplit aussi les macros
   const handleEditClick = (meal: Meal) => {
     setEditingId(meal.id)
     setEditNom(meal.nom)
@@ -492,7 +499,6 @@ export default function DashboardPage() {
     setEditLipides(meal.lipides ? String(meal.lipides) : '')
   }
 
-  // ✅ MODIFIÉ — sauvegarde aussi les macros
   const handleSaveEdit = async () => {
     if (!editNom.trim() || !editCalories) return
     const updateData: any = {
@@ -508,10 +514,44 @@ export default function DashboardPage() {
     setEditProteines(''); setEditGlucides(''); setEditLipides('')
   }
 
-  // ✅ MODIFIÉ — reset aussi les macros
   const handleCancelEdit = () => {
     setEditingId(null)
     setEditProteines(''); setEditGlucides(''); setEditLipides('')
+  }
+
+  // ✅ NOUVEAU — édition depuis l'historique calendrier
+  const handleHistoryEditClick = (meal: Meal) => {
+    setHistoryEditingId(meal.id)
+    setHistoryEditNom(meal.nom)
+    setHistoryEditCalories(String(meal.calories))
+    setHistoryEditProteines(meal.proteines ? String(meal.proteines) : '')
+    setHistoryEditGlucides(meal.glucides ? String(meal.glucides) : '')
+    setHistoryEditLipides(meal.lipides ? String(meal.lipides) : '')
+  }
+
+  const handleHistorySaveEdit = async () => {
+    if (!historyEditNom.trim() || !historyEditCalories) return
+    const updateData: any = {
+      nom: historyEditNom.trim(),
+      calories: parseInt(historyEditCalories),
+      proteines: historyEditProteines ? parseInt(historyEditProteines) : null,
+      glucides:  historyEditGlucides  ? parseInt(historyEditGlucides)  : null,
+      lipides:   historyEditLipides   ? parseInt(historyEditLipides)   : null,
+    }
+    const { error } = await supabase.from('meals').update(updateData).eq('id', historyEditingId)
+    if (!error && selectedDay) {
+      await fetchDayMeals(user.id, selectedDay)
+      await fetchCalendarData(user.id, calendarMonth)
+    }
+    setHistoryEditingId(null)
+    setHistoryEditNom(''); setHistoryEditCalories('')
+    setHistoryEditProteines(''); setHistoryEditGlucides(''); setHistoryEditLipides('')
+  }
+
+  const handleHistoryCancelEdit = () => {
+    setHistoryEditingId(null)
+    setHistoryEditNom(''); setHistoryEditCalories('')
+    setHistoryEditProteines(''); setHistoryEditGlucides(''); setHistoryEditLipides('')
   }
 
   const handleSaveGoals = async () => {
@@ -549,7 +589,6 @@ export default function DashboardPage() {
     setEditGoalLip(String(lip))
   }
 
-  // ✅ NOUVEAU — sauvegarde TDEE modifié depuis le dashboard
   const handleSaveTdee = async () => {
     const val = parseInt(editTdeeValue)
     if (!val || val < 500 || val > 10000) return
@@ -761,6 +800,11 @@ export default function DashboardPage() {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none',
     width: '100%', transition: 'all 0.25s', background: '#fafbff',
   }
+  const inputSmStyle: React.CSSProperties = {
+    padding: '8px 12px', border: '2px solid #ede9f8', borderRadius: 10, fontSize: 14,
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none',
+    width: '100%', transition: 'all 0.25s', background: '#fafbff',
+  }
   const btnPrimaryStyle: React.CSSProperties = {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white', border: 'none', padding: '13px 26px', borderRadius: 12,
@@ -837,29 +881,15 @@ export default function DashboardPage() {
             <div style={{ marginTop: 12, padding: 10, borderRadius: 10, textAlign: 'center', background: totalCalories > tdee ? '#ffebee' : '#e8f5e9', color: totalCalories > tdee ? '#c62828' : '#2e7d32', fontWeight: 500, fontSize: '0.95em' }}>
               {totalCalories > tdee ? t.exceeded(totalCalories - tdee) : t.remainingToday(remaining)}
             </div>
-
-            {/* ✏️ NOUVEAU — Objectif calorique modifiable */}
             <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
               {editingTdee ? (
                 <>
-                  <input
-                    type="number"
-                    value={editTdeeValue}
-                    onChange={(e) => setEditTdeeValue(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTdee()}
-                    min={500} max={10000}
-                    autoFocus
-                    style={{ width: 110, padding: '6px 10px', borderRadius: 8, border: '2px solid #667eea', fontSize: '0.95em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none', textAlign: 'center' }}
-                  />
+                  <input type="number" value={editTdeeValue} onChange={(e) => setEditTdeeValue(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTdee()} min={500} max={10000} autoFocus
+                    style={{ width: 110, padding: '6px 10px', borderRadius: 8, border: '2px solid #667eea', fontSize: '0.95em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none', textAlign: 'center' }} />
                   <span style={{ color: '#999', fontSize: '0.85em' }}>kcal</span>
-                  <button onClick={handleSaveTdee}
-                    style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
-                    ✅
-                  </button>
-                  <button onClick={() => setEditingTdee(false)}
-                    style={{ background: '#e0e0e0', color: '#666', border: 'none', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
-                    ✕
-                  </button>
+                  <button onClick={handleSaveTdee} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✅</button>
+                  <button onClick={() => setEditingTdee(false)} style={{ background: '#e0e0e0', color: '#666', border: 'none', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
                 </>
               ) : (
                 <button onClick={() => { setEditTdeeValue(String(tdee)); setEditingTdee(true) }}
@@ -944,14 +974,9 @@ export default function DashboardPage() {
                     <span style={{ fontSize: 13, fontWeight: '700', color }}>{label}</span>
                   </div>
                   <div style={{ position: 'relative' }}>
-                    <input
-                      type="number" min="0" max="500"
-                      value={val}
-                      onChange={(e) => set(e.target.value)}
-                      onFocus={e => e.target.style.borderColor = color}
-                      onBlur={e => e.target.style.borderColor = '#ede9f8'}
-                      style={{ ...inputStyle, textAlign: 'center', paddingRight: 30 }}
-                    />
+                    <input type="number" min="0" max="500" value={val} onChange={(e) => set(e.target.value)}
+                      onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                      style={{ ...inputStyle, textAlign: 'center', paddingRight: 30 }} />
                     <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: '#aaa', pointerEvents: 'none' }}>g</span>
                   </div>
                 </div>
@@ -993,25 +1018,84 @@ export default function DashboardPage() {
               {t.days.map((d) => (<div key={d} style={{ textAlign: 'center', fontSize: 14, fontWeight: 'bold', color: '#999', padding: '6px 0' }}>{d}</div>))}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>{renderCalendar()}</div>
+
+            {/* ✅ NOUVEAU — Détail du jour avec édition macros */}
             {selectedDay && (
               <div style={{ marginTop: 16, padding: 16, background: '#f8f9ff', borderRadius: 12, border: '2px solid #667eea' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <h3 style={{ margin: 0, color: '#667eea', fontSize: '1em' }}>
                     {t.mealsOfDay} {new Date(selectedDay + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </h3>
-                  <button onClick={() => setSelectedDay(null)} style={{ background: '#e0e0e0', border: 'none', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>{t.closeDetail}</button>
+                  <button onClick={() => { setSelectedDay(null); setHistoryEditingId(null) }}
+                    style={{ background: '#e0e0e0', border: 'none', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>{t.closeDetail}</button>
                 </div>
                 {selectedDayMeals.length === 0 ? (
                   <p style={{ color: '#999', fontSize: '0.9em', margin: 0 }}>{t.noDataDay}</p>
                 ) : (
                   <>
                     {selectedDayMeals.map((meal) => (
-                      <div key={meal.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: 'white', borderRadius: 8, marginBottom: 6, border: '1px solid #e0e0e0' }}>
-                        <span style={{ color: '#333' }}>{meal.nom}</span>
-                        <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
+                      <div key={meal.id} style={{ marginBottom: 8 }}>
+                        {historyEditingId === meal.id ? (
+                          // ✅ Formulaire d'édition inline dans l'historique
+                          <div style={{ background: 'white', border: '2px solid #667eea', borderRadius: 12, padding: 14 }}>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                              <input type="text" value={historyEditNom} onChange={(e) => setHistoryEditNom(e.target.value)}
+                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                style={{ ...inputSmStyle, flex: 2, minWidth: 130 }} />
+                              <input type="number" placeholder="kcal" value={historyEditCalories} onChange={(e) => setHistoryEditCalories(e.target.value)}
+                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                style={{ ...inputSmStyle, width: 90 }} />
+                            </div>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                              {[
+                                { emoji: '🥩', color: '#667eea', val: historyEditProteines, set: setHistoryEditProteines, ph: 'Prot. (g)' },
+                                { emoji: '🌾', color: '#f093fb', val: historyEditGlucides,  set: setHistoryEditGlucides,  ph: 'Gluc. (g)' },
+                                { emoji: '🫒', color: '#43e97b', val: historyEditLipides,   set: setHistoryEditLipides,   ph: 'Lip. (g)' },
+                              ].map(({ emoji, color, val, set, ph }) => (
+                                <div key={ph} style={{ flex: 1, minWidth: 80 }}>
+                                  <div style={{ fontSize: 18, marginBottom: 4 }}>{emoji}</div>
+                                  <input type="number" placeholder={ph} value={val} onChange={(e) => set(e.target.value)}
+                                    onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                    style={{ ...inputSmStyle, textAlign: 'center' }} />
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <button onClick={handleHistorySaveEdit}
+                                style={{ flex: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                                {t.savEdit}
+                              </button>
+                              <button onClick={handleHistoryCancelEdit}
+                                style={{ flex: 1, background: '#e0e0e0', color: '#666', border: 'none', padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                                {t.cancelEdit}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          // ✅ Affichage du repas avec macros + bouton ✏️
+                          <div style={{ background: 'white', borderRadius: 10, padding: '10px 14px', border: '1px solid #e0e0e0' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div>
+                                <span style={{ color: '#333', fontWeight: '600' }}>{meal.nom}</span>
+                                {(meal.proteines || meal.glucides || meal.lipides) && (
+                                  <div style={{ fontSize: '0.75em', marginTop: 3 }}>
+                                    {meal.proteines ? <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {meal.proteines}g</span> : null}
+                                    {meal.glucides  ? <span style={{ color: '#f093fb', marginRight: 8 }}>🌾 {meal.glucides}g</span> : null}
+                                    {meal.lipides   ? <span style={{ color: '#43e97b' }}>🫒 {meal.lipides}g</span> : null}
+                                  </div>
+                                )}
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                                <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
+                                <button onClick={() => handleHistoryEditClick(meal)}
+                                  style={{ background: '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✏️</button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 8, marginTop: 4 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 14px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 8, marginTop: 4 }}>
                       <span style={{ color: 'white', fontWeight: 'bold' }}>{t.total}</span>
                       <span style={{ color: 'white', fontWeight: 'bold' }}>{selectedDayMeals.reduce((s, m) => s + m.calories, 0)} kcal</span>
                     </div>
@@ -1093,8 +1177,7 @@ export default function DashboardPage() {
               <input type="text" placeholder={t.searchPlaceholder} value={searchQuery}
                 onChange={(e) => handleSearchQueryChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleFoodSearch()}
-                onFocus={e => e.target.style.borderColor = '#667eea'}
-                onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
                 style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
               <button onClick={handleFoodSearch} disabled={searching} style={{ ...btnPrimaryStyle, opacity: searching ? 0.6 : 1 }}>
                 {searching ? t.searching : t.searchButton}
@@ -1221,7 +1304,6 @@ export default function DashboardPage() {
                 {meals.map((meal) => (
                   <div key={meal.id} style={{ marginBottom: 8 }}>
                     {editingId === meal.id ? (
-                      // ✅ NOUVEAU formulaire d'édition avec macros
                       <div style={{ background: '#f8f9ff', border: '2px solid #667eea', borderRadius: 12, padding: 14 }}>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                           <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)}
@@ -1273,7 +1355,6 @@ export default function DashboardPage() {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
-                          {/* ✅ NOUVEAU — bouton ✏️ dédié */}
                           <button onClick={() => handleEditClick(meal)}
                             style={{ background: '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", fontWeight: 'bold', fontSize: 14 }}>✏️</button>
                           <button onClick={() => handleDeleteClick(meal.id)}
