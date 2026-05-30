@@ -26,7 +26,7 @@ export default function Terms() {
       <p>Nous nous réservons le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés par email de tout changement important.</p>
 
       <h2>8. Contact</h2>
-      <p>Pour toute question : <a href="mailto:daousa777@gmail.com" style={{ color: "#667eea" }}>daousa777@gmail.com</a></p>
+      <p>For any questions, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSdI8IYoNx3iy6Z1-Or67H_6lEw7AjaABpBHnkHPv7SVfN6qxQ/viewform" style={{ color: "#667eea" }}>contact us here</a>.</p>
     </main>
   );
 }
