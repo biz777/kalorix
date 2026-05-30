@@ -23,7 +23,7 @@ export default function Privacy() {
       <p>Vous avez le droit d'accéder, modifier ou supprimer vos données à tout moment. Contactez-nous pour toute demande.</p>
 
       <h2>7. Contact</h2>
-      <p>Pour toute question : <a href="mailto:daousa777@gmail.com" style={{ color: "#667eea" }}>daousa777@gmail.com</a></p>
+      <p>For any questions, please <a href="https://docs.google.com/forms/d/e/1FAIpQLSdI8IYoNx3iy6Z1-Or67H_6lEw7AjaABpBHnkHPv7SVfN6qxQ/viewform" style={{ color: "#667eea" }}>contact us here</a>.</p>
     </main>
   );
 }
