@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTheme } from './providers'
 
 type Lang = 'fr' | 'en' | 'es'
 
@@ -127,6 +128,7 @@ const seoMeta: Record<Lang, { title: string; description: string }> = {
 
 export default function LandingPage() {
   const router = useRouter()
+  const { isDark, toggle } = useTheme()
   const [lang, setLang] = useState<Lang>('fr')
   const [scrolled, setScrolled] = useState(false)
 
@@ -156,13 +158,28 @@ export default function LandingPage() {
 
   const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
 
+  // ─── Couleurs dark mode ───────────────────────────────────────────────────
+  const pageBg        = isDark ? '#0d0d1a' : '#fafbff'
+  const cardBg        = isDark ? '#1a1a2e' : 'white'
+  const cardBorder    = isDark ? 'rgba(102,126,234,0.2)' : 'rgba(102,126,234,0.1)'
+  const cardShadow    = isDark ? '0 4px 24px rgba(0,0,0,0.4)' : '0 4px 24px rgba(102,126,234,0.08)'
+  const titleColor    = isDark ? '#e8e8ff' : '#1a1040'
+  const textColor     = isDark ? '#a0a0c0' : '#666'
+  const footerBorder  = isDark ? '#1f1f35' : '#eee'
+  const footerColor   = isDark ? '#555577' : '#aaa'
+  const navBgScrolled = isDark ? 'rgba(13,13,26,0.95)' : 'rgba(255,255,255,0.95)'
+  const navTitleColor = scrolled ? '#667eea' : 'white'
+  const ctaBtnBorder  = isDark ? '#667eea' : '#667eea'
+  const ctaBtnBg      = isDark ? '#1a1a2e' : 'white'
+  const ctaBtnColor   = '#667eea'
+
   return (
-    <div style={{ fontFamily: ff, background: '#fafbff', minHeight: '100vh', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: ff, background: pageBg, minHeight: '100vh', overflowX: 'hidden', transition: 'background 0.3s' }}>
 
       {/* NAV */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
+        background: scrolled ? navBgScrolled : 'transparent',
         backdropFilter: scrolled ? 'blur(12px)' : 'none',
         boxShadow: scrolled ? '0 2px 20px rgba(102,126,234,0.12)' : 'none',
         transition: 'all 0.3s', padding: '14px 32px',
@@ -170,7 +187,7 @@ export default function LandingPage() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: '1.6em' }}>🥗</span>
-          <span style={{ fontWeight: '800', fontSize: '1.3em', color: scrolled ? '#667eea' : 'white', letterSpacing: '-0.5px' }}>Kalorix</span>
+          <span style={{ fontWeight: '800', fontSize: '1.3em', color: navTitleColor, letterSpacing: '-0.5px' }}>Kalorix</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           {langOptions.map(({ code, flag, label }) => (
@@ -179,16 +196,29 @@ export default function LandingPage() {
                 display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px',
                 borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: ff,
                 fontWeight: lang === code ? '700' : '500',
-                background: lang === code ? 'white' : 'rgba(255,255,255,0.18)',
-                color: lang === code ? '#667eea' : scrolled ? '#555' : 'white',
+                background: lang === code ? (isDark ? '#2a2a4a' : 'white') : 'rgba(255,255,255,0.18)',
+                color: lang === code ? '#667eea' : scrolled ? (isDark ? '#ccc' : '#555') : 'white',
                 boxShadow: lang === code ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
                 transition: 'all 0.2s',
               }}>
               <span>{flag}</span><span>{label}</span>
             </button>
           ))}
+
           <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.3)', margin: '0 4px' }} />
-          {/* Pricing link */}
+
+          {/* ─── TOGGLE DARK MODE ─── */}
+          <button onClick={toggle}
+            aria-label="Basculer thème"
+            style={{
+              background: scrolled ? (isDark ? '#2a2a4a' : '#f0f2ff') : 'rgba(255,255,255,0.15)',
+              border: 'none', borderRadius: 20, cursor: 'pointer',
+              padding: '6px 10px', fontSize: '1.1em',
+              transition: 'all 0.2s',
+            }}>
+            {isDark ? '☀️' : '🌙'}
+          </button>
+
           <button onClick={() => router.push('/pricing')}
             style={{
               background: 'none', border: 'none', cursor: 'pointer', fontFamily: ff,
@@ -210,7 +240,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* HERO — inchangé, déjà sombre */}
       <div style={{
         background: 'linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)',
         padding: '140px 24px 100px', textAlign: 'center', position: 'relative', overflow: 'hidden',
@@ -227,7 +257,6 @@ export default function LandingPage() {
           }}>
             {t.hero_tag}
           </div>
-
           <h1 style={{
             color: 'white', fontSize: 'clamp(2em, 5vw, 3.4em)', fontWeight: '800',
             lineHeight: 1.15, margin: '0 0 24px', letterSpacing: '-1px',
@@ -235,14 +264,12 @@ export default function LandingPage() {
           }}>
             {t.hero_title}
           </h1>
-
           <p style={{
             color: 'rgba(255,255,255,0.78)', fontSize: 'clamp(1em, 2.5vw, 1.2em)',
             lineHeight: 1.7, margin: '0 0 40px', maxWidth: 560, marginLeft: 'auto', marginRight: 'auto',
           }}>
             {t.hero_sub}
           </p>
-
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
               <button onClick={() => router.push('/login')}
@@ -277,10 +304,7 @@ export default function LandingPage() {
         </div>
 
         {/* Stats band */}
-        <div style={{
-          display: 'flex', justifyContent: 'center', gap: 'clamp(20px, 5vw, 60px)',
-          marginTop: 70, flexWrap: 'wrap',
-        }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px, 5vw, 60px)', marginTop: 70, flexWrap: 'wrap' }}>
           {t.stats.map((s) => (
             <div key={s.label} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 'clamp(1.8em, 4vw, 2.6em)', fontWeight: '800', color: 'white', letterSpacing: '-1px' }}>{s.value}</div>
@@ -292,32 +316,29 @@ export default function LandingPage() {
 
       {/* FEATURES */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 24px' }}>
-        <h2 style={{ textAlign: 'center', fontSize: 'clamp(1.5em, 3vw, 2.2em)', fontWeight: '800', color: '#1a1040', marginBottom: 56, letterSpacing: '-0.5px' }}>
+        <h2 style={{ textAlign: 'center', fontSize: 'clamp(1.5em, 3vw, 2.2em)', fontWeight: '800', color: titleColor, marginBottom: 56, letterSpacing: '-0.5px', transition: 'color 0.3s' }}>
           {t.features_title}
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
           {t.features.map((f) => (
             <div key={f.title}
               style={{
-                background: 'white', borderRadius: 20, padding: '28px 24px',
-                boxShadow: '0 4px 24px rgba(102,126,234,0.08)', border: '1px solid rgba(102,126,234,0.1)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                background: cardBg, borderRadius: 20, padding: '28px 24px',
+                boxShadow: cardShadow, border: `1px solid ${cardBorder}`,
+                transition: 'transform 0.2s, box-shadow 0.2s, background 0.3s',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 40px rgba(102,126,234,0.18)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 24px rgba(102,126,234,0.08)' }}>
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = isDark ? '0 12px 40px rgba(0,0,0,0.6)' : '0 12px 40px rgba(102,126,234,0.18)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = cardShadow }}>
               <div style={{ fontSize: '2em', marginBottom: 14 }}>{f.icon}</div>
-              <h3 style={{ fontSize: '1.1em', fontWeight: '700', color: '#1a1040', margin: '0 0 10px' }}>{f.title}</h3>
-              <p style={{ color: '#666', fontSize: '0.92em', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
+              <h3 style={{ fontSize: '1.1em', fontWeight: '700', color: titleColor, margin: '0 0 10px', transition: 'color 0.3s' }}>{f.title}</h3>
+              <p style={{ color: textColor, fontSize: '0.92em', lineHeight: 1.65, margin: 0, transition: 'color 0.3s' }}>{f.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* TESTIMONY BAND */}
-      <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '60px 24px', textAlign: 'center',
-      }}>
+      {/* TESTIMONY BAND — inchangé */}
+      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 24px', textAlign: 'center' }}>
         <div style={{ fontSize: '3em', marginBottom: 16 }}>👴🏻👵🏻</div>
         <h2 style={{ color: 'white', fontSize: 'clamp(1.4em, 3vw, 2em)', fontWeight: '800', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
           {t.testimony_title}
@@ -326,11 +347,11 @@ export default function LandingPage() {
       </div>
 
       {/* BOTTOM CTA */}
-      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-        <h2 style={{ fontSize: 'clamp(1.5em, 3vw, 2.2em)', fontWeight: '800', color: '#1a1040', marginBottom: 12, letterSpacing: '-0.5px' }}>
+      <div style={{ textAlign: 'center', padding: '80px 24px', transition: 'background 0.3s' }}>
+        <h2 style={{ fontSize: 'clamp(1.5em, 3vw, 2.2em)', fontWeight: '800', color: titleColor, marginBottom: 12, letterSpacing: '-0.5px', transition: 'color 0.3s' }}>
           {t.cta_title}
         </h2>
-        <p style={{ color: '#888', fontSize: '1em', marginBottom: 36 }}>{t.cta_sub}</p>
+        <p style={{ color: textColor, fontSize: '1em', marginBottom: 36, transition: 'color 0.3s' }}>{t.cta_sub}</p>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => router.push('/login')}
             style={{
@@ -346,24 +367,24 @@ export default function LandingPage() {
           </button>
           <button onClick={() => router.push('/pricing')}
             style={{
-              background: 'white', border: '2px solid #667eea', color: '#667eea',
+              background: ctaBtnBg, border: `2px solid ${ctaBtnBorder}`, color: ctaBtnColor,
               padding: '16px 44px', borderRadius: 50, fontSize: '1.1em', fontWeight: '700',
-              cursor: 'pointer', fontFamily: ff, transition: 'all 0.2s',
+              cursor: 'pointer', fontFamily: ff, transition: 'all 0.3s',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f0f2ff' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'white' }}>
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = isDark ? '#2a2a4a' : '#f0f2ff' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = ctaBtnBg }}>
             {t.nav_pricing} 💰
           </button>
         </div>
       </div>
 
       {/* FOOTER */}
-      <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: '1px solid #eee', color: '#aaa', fontSize: '0.85em' }}>
+      <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: `1px solid ${footerBorder}`, color: footerColor, fontSize: '0.85em', transition: 'all 0.3s' }}>
         <div style={{ marginBottom: 12, display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => router.push('/pricing')} style={{ background: 'none', border: 'none', color: '#667eea', cursor: 'pointer', fontSize: '0.85em', fontFamily: ff, fontWeight: '600' }}>{t.footer_pricing}</button>
-          <button onClick={() => router.push('/terms')} style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_terms}</button>
-          <button onClick={() => router.push('/privacy')} style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_privacy}</button>
-          <button onClick={() => router.push('/refund')} style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_refund}</button>
+          <button onClick={() => router.push('/terms')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_terms}</button>
+          <button onClick={() => router.push('/privacy')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_privacy}</button>
+          <button onClick={() => router.push('/refund')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_refund}</button>
         </div>
         {t.footer}
       </footer>
