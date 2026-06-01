@@ -2,12 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
+import { useTheme } from "@/app/providers";
+import { useRouter } from "next/navigation";
 
 const PRICE_ID_MONTHLY = "pri_MONTHLY_PLACEHOLDER";
 const PRICE_ID_ANNUAL  = "pri_ANNUAL_PLACEHOLDER";
 const PADDLE_CLIENT_TOKEN = "test_PADDLE_TOKEN_PLACEHOLDER";
 
 export default function Pricing() {
+  const { isDark, toggle } = useTheme();
+  const router = useRouter();
   const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
   const [loading, setLoading] = useState<"monthly" | "annual" | null>(null);
 
@@ -37,7 +41,20 @@ export default function Pricing() {
   const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
 
   return (
-    <div style={{ fontFamily: ff, background: "linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+    <div style={{ fontFamily: ff, background: "linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", position: "relative" }}>
+
+      {/* Toggle + retour — coin supérieur droit */}
+      <div style={{ position: "fixed", top: 20, right: 24, display: "flex", gap: 10, zIndex: 50 }}>
+        <button onClick={() => router.back()}
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 16px", borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: ff, fontWeight: "600", transition: "all 0.2s" }}>
+          ← Retour
+        </button>
+        <button onClick={toggle} aria-label="Basculer thème"
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 12px", borderRadius: 20, cursor: "pointer", fontSize: "1.1em", transition: "all 0.2s" }}>
+          {isDark ? "☀️" : "🌙"}
+        </button>
+      </div>
+
       <div style={{ maxWidth: 860, width: "100%" }}>
 
         {/* Header */}
