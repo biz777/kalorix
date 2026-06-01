@@ -8,6 +8,7 @@ import {
   PieChart, Pie, Cell,
 } from 'recharts'
 import { searchLocalFoods, cuisineFlags, cuisineLabels, type LocalFood } from '@/lib/foodDatabase'
+import { useTheme } from '@/app/providers'
 
 const translations = {
   fr: {
@@ -250,6 +251,7 @@ const CUISINE_ORDER: Array<LocalFood['cuisine'] | 'all'> = ['all', 'daily', 'us'
 
 export default function DashboardPage() {
   const router = useRouter()
+  const { isDark, toggle } = useTheme()
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -272,7 +274,6 @@ export default function DashboardPage() {
   const [editGlucides, setEditGlucides] = useState('')
   const [editLipides, setEditLipides] = useState('')
 
-  // ✅ NOUVEAU — édition depuis l'historique calendrier
   const [historyEditingId, setHistoryEditingId] = useState<string | null>(null)
   const [historyEditNom, setHistoryEditNom] = useState('')
   const [historyEditCalories, setHistoryEditCalories] = useState('')
@@ -434,7 +435,9 @@ export default function DashboardPage() {
   const getDayColor = (dateKey: string) => {
     const total = calendarData[dateKey]
     const tdee = profile?.tdee ?? 2000
-    if (total === undefined) return { bg: '#eeeeee', text: '#999' }
+    if (total === undefined) return isDark
+      ? { bg: '#1e1e2e', text: '#555' }
+      : { bg: '#eeeeee', text: '#999' }
     if (total > tdee) return { bg: '#ff5252', text: 'white' }
     if (total > tdee * 0.85) return { bg: '#ffb300', text: 'white' }
     return { bg: '#00c853', text: 'white' }
@@ -519,7 +522,6 @@ export default function DashboardPage() {
     setEditProteines(''); setEditGlucides(''); setEditLipides('')
   }
 
-  // ✅ NOUVEAU — édition depuis l'historique calendrier
   const handleHistoryEditClick = (meal: Meal) => {
     setHistoryEditingId(meal.id)
     setHistoryEditNom(meal.nom)
@@ -774,7 +776,7 @@ export default function DashboardPage() {
       return (
         <div key={idx} onClick={() => handleDayClick(dateKey)}
           style={{ background: isSelected ? '#667eea' : colors.bg, borderRadius: 10, padding: '10px 4px', textAlign: 'center', cursor: 'pointer', border: isToday ? '2px solid #667eea' : '2px solid transparent', transition: 'all 0.2s', minHeight: 70, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-          <span style={{ fontWeight: isToday ? 'bold' : 'normal', fontSize: 16, color: isSelected ? 'white' : '#333' }}>{day}</span>
+          <span style={{ fontWeight: isToday ? 'bold' : 'normal', fontSize: 16, color: isSelected ? 'white' : isDark ? '#ddd' : '#333' }}>{day}</span>
           {total !== undefined && <span style={{ fontSize: 12, color: isSelected ? 'white' : colors.text, fontWeight: 'bold' }}>{total}</span>}
         </div>
       )
@@ -791,25 +793,78 @@ export default function DashboardPage() {
     )
   }
 
+  // ─── Palette dark mode ────────────────────────────────────────────────────
+  const pageBg        = isDark ? '#0d0d1a' : 'linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)'
+  const wrapperBg     = isDark ? '#13131f' : '#fafbff'
+  const cardBg        = isDark ? '#1a1a2e' : 'white'
+  const cardBorder    = isDark ? 'rgba(102,126,234,0.2)' : 'rgba(102,126,234,0.08)'
+  const cardShadow    = isDark ? '0 8px 30px rgba(0,0,0,0.5)' : '0 8px 30px rgba(102,126,234,0.12)'
+  const titleColor    = isDark ? '#a0a0ff' : '#667eea'
+  const textColor     = isDark ? '#c0c0d8' : '#333'
+  const subTextColor  = isDark ? '#6666aa' : '#aaa'
+  const inputBg       = isDark ? '#0f0f1e' : '#fafbff'
+  const inputBorder   = isDark ? '#2a2a4a' : '#ede9f8'
+  const mealRowBg     = isDark ? '#1e1e35' : '#f8f9ff'
+  const mealRowBorder = isDark ? '#2a2a4a' : '#f0f0f0'
+  const mealRowHoverBg     = isDark ? '#252540' : '#f0f3ff'
+  const mealRowHoverBorder = isDark ? '#667eea' : '#667eea'
+  const calBtnBg      = isDark ? '#1e1e35' : '#f0f0f0'
+  const calBtnColor   = isDark ? '#aaa' : '#666'
+  const calMonthColor = isDark ? '#ddd' : '#333'
+  const progressBg    = isDark ? '#1e1e35' : '#f0f0f0'
+  const progressMsgBgOk  = isDark ? '#0a2e0f' : '#e8f5e9'
+  const progressMsgClOk  = isDark ? '#4caf50' : '#2e7d32'
+  const progressMsgBgErr = isDark ? '#2e0a0a' : '#ffebee'
+  const progressMsgClErr = isDark ? '#ef5350' : '#c62828'
+  const editGoalBtnBg    = isDark ? '#1e1e35' : 'linear-gradient(135deg, #f0f3ff 0%, #e8ecff 100%)'
+  const resetBtnBg    = isDark ? '#1a1a2e' : '#fafbff'
+  const resetBtnBorder= isDark ? '#2a2a4a' : '#ede9f8'
+  const habituelBg    = isDark ? '#1a1a2e' : '#f8f9ff'
+  const searchLocalBg = isDark ? '#1a1a35' : '#f0f3ff'
+  const searchLocalBorder = isDark ? '#2a2a55' : '#dde3f8'
+  const searchOFFBg   = isDark ? '#1a1a2e' : '#f8f9ff'
+  const searchOFFBorder= isDark ? '#2a2a4a' : '#e8e0f8'
+  const macroTotalBg  = isDark ? '#1a1a35' : '#f0f3ff'
+  const macroBg       = isDark ? '#1e1e35' : '#f0f0f0'
+  const dayDetailBg   = isDark ? '#13131f' : '#f8f9ff'
+  const dayDetailBorder = isDark ? '#667eea' : '#667eea'
+  const dayMealBg     = isDark ? '#1a1a2e' : 'white'
+  const dayMealBorder = isDark ? '#2a2a4a' : '#e0e0e0'
+  const deletePendingBg = isDark ? '#2e1a1a' : '#fff3f3'
+  const deletePendingBorder = isDark ? '#7f3030' : '#ffcdd2'
+  const deletePendingColor  = isDark ? '#ef5350' : '#e53935'
+  const cancelBtnBg   = isDark ? '#2a2a4a' : 'white'
+  const cancelBtnBorder = isDark ? '#3a3a5a' : '#e0e0e0'
+  const cancelBtnColor  = isDark ? '#aaa' : '#666'
+  const editFormBg    = isDark ? '#13131f' : '#f8f9ff'
+  const editFormBorder= isDark ? '#667eea' : '#667eea'
+  const tooltipBg     = isDark ? '#1a1a2e' : 'white'
+  const tooltipBorder = isDark ? '#667eea' : '#667eea'
+  const filterBtnBg   = isDark ? '#1e1e35' : '#f0f0f8'
+  const filterBtnColor= isDark ? '#aaa' : '#555'
+
+  const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+
   const cardStyle: React.CSSProperties = {
-    background: 'white', borderRadius: 20, padding: 28, marginBottom: 20,
-    boxShadow: '0 8px 30px rgba(102,126,234,0.12)', border: '1px solid rgba(102,126,234,0.08)',
+    background: cardBg, borderRadius: 20, padding: 28, marginBottom: 20,
+    boxShadow: cardShadow, border: `1px solid ${cardBorder}`,
+    transition: 'background 0.3s, border 0.3s',
   }
   const inputStyle: React.CSSProperties = {
-    padding: '13px 18px', border: '2px solid #ede9f8', borderRadius: 12, fontSize: 15,
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none',
-    width: '100%', transition: 'all 0.25s', background: '#fafbff',
+    padding: '13px 18px', border: `2px solid ${inputBorder}`, borderRadius: 12, fontSize: 15,
+    fontFamily: ff, outline: 'none', width: '100%', transition: 'all 0.25s',
+    background: inputBg, color: textColor,
   }
   const inputSmStyle: React.CSSProperties = {
-    padding: '8px 12px', border: '2px solid #ede9f8', borderRadius: 10, fontSize: 14,
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none',
-    width: '100%', transition: 'all 0.25s', background: '#fafbff',
+    padding: '8px 12px', border: `2px solid ${inputBorder}`, borderRadius: 10, fontSize: 14,
+    fontFamily: ff, outline: 'none', width: '100%', transition: 'all 0.25s',
+    background: inputBg, color: textColor,
   }
   const btnPrimaryStyle: React.CSSProperties = {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white', border: 'none', padding: '13px 26px', borderRadius: 12,
     fontWeight: '700', cursor: 'pointer', fontSize: 15, letterSpacing: '0.3px',
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.25s',
+    fontFamily: ff, transition: 'all 0.25s',
     boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
   }
 
@@ -821,10 +876,10 @@ export default function DashboardPage() {
   const periodLabel = (d: number) => lang === 'fr' ? `${d}j` : `${d}d`
 
   return (
-    <div suppressHydrationWarning style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)', padding: '30px 16px', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
-      <div style={{ maxWidth: 820, margin: '0 auto', background: '#fafbff', borderRadius: 28, boxShadow: '0 32px 80px rgba(60,30,120,0.4)', padding: 0, overflow: 'hidden' }}>
+    <div suppressHydrationWarning style={{ minHeight: '100vh', background: pageBg, padding: '30px 16px', fontFamily: ff, transition: 'background 0.3s' }}>
+      <div style={{ maxWidth: 820, margin: '0 auto', background: wrapperBg, borderRadius: 28, boxShadow: '0 32px 80px rgba(60,30,120,0.4)', padding: 0, overflow: 'hidden', transition: 'background 0.3s' }}>
 
-        {/* Header */}
+        {/* Header — toujours sombre, inchangé */}
         <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '32px 30px 26px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
           <div style={{ position: 'absolute', bottom: -40, left: -40, width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
@@ -835,12 +890,19 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, flexWrap: 'wrap', position: 'relative' }}>
             {langOptions.map(({ code, flag, label }) => (
               <button key={code} onClick={() => handleLangChange(code)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.25s', background: lang === code ? 'white' : 'rgba(255,255,255,0.18)', color: lang === code ? '#667eea' : 'white', boxShadow: lang === code ? '0 4px 12px rgba(0,0,0,0.2)' : 'none', transform: lang === code ? 'scale(1.05)' : 'scale(1)' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: 13, fontFamily: ff, transition: 'all 0.25s', background: lang === code ? 'white' : 'rgba(255,255,255,0.18)', color: lang === code ? '#667eea' : 'white', boxShadow: lang === code ? '0 4px 12px rgba(0,0,0,0.2)' : 'none', transform: lang === code ? 'scale(1.05)' : 'scale(1)' }}>
                 <span style={{ fontSize: 15 }}>{flag}</span><span>{label}</span>
               </button>
             ))}
             <div style={{ width: 1, height: 22, background: 'rgba(255,255,255,0.25)', margin: '0 2px' }} />
-            <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+
+            {/* ─── TOGGLE DARK MODE ─── */}
+            <button onClick={toggle} aria-label="Basculer thème"
+              style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 12px', borderRadius: 20, cursor: 'pointer', fontSize: '1.1em', fontFamily: ff, transition: 'all 0.2s' }}>
+              {isDark ? '☀️' : '🌙'}
+            </button>
+
+            <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>
               {t.logout}
             </button>
           </div>
@@ -873,12 +935,12 @@ export default function DashboardPage() {
               <span style={{ fontWeight: 'bold', color: '#667eea', fontSize: '1.1em' }}>{totalCalories} {t.consumed}</span>
               <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '1.1em' }}>{t.goal} : {tdee} kcal</span>
             </div>
-            <div style={{ width: '100%', height: 30, background: '#f0f0f0', borderRadius: 15, overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: 30, background: progressBg, borderRadius: 15, overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${progress}%`, background: `linear-gradient(90deg, ${progressColor} 0%, #764ba2 100%)`, transition: 'width 0.5s', borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10, color: 'white', fontWeight: 'bold', fontSize: '0.9em' }}>
                 {progress > 10 ? `${Math.round(progress)}%` : ''}
               </div>
             </div>
-            <div style={{ marginTop: 12, padding: 10, borderRadius: 10, textAlign: 'center', background: totalCalories > tdee ? '#ffebee' : '#e8f5e9', color: totalCalories > tdee ? '#c62828' : '#2e7d32', fontWeight: 500, fontSize: '0.95em' }}>
+            <div style={{ marginTop: 12, padding: 10, borderRadius: 10, textAlign: 'center', background: totalCalories > tdee ? progressMsgBgErr : progressMsgBgOk, color: totalCalories > tdee ? progressMsgClErr : progressMsgClOk, fontWeight: 500, fontSize: '0.95em' }}>
               {totalCalories > tdee ? t.exceeded(totalCalories - tdee) : t.remainingToday(remaining)}
             </div>
             <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
@@ -886,16 +948,16 @@ export default function DashboardPage() {
                 <>
                   <input type="number" value={editTdeeValue} onChange={(e) => setEditTdeeValue(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveTdee()} min={500} max={10000} autoFocus
-                    style={{ width: 110, padding: '6px 10px', borderRadius: 8, border: '2px solid #667eea', fontSize: '0.95em', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", outline: 'none', textAlign: 'center' }} />
-                  <span style={{ color: '#999', fontSize: '0.85em' }}>kcal</span>
-                  <button onClick={handleSaveTdee} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✅</button>
-                  <button onClick={() => setEditingTdee(false)} style={{ background: '#e0e0e0', color: '#666', border: 'none', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
+                    style={{ width: 110, padding: '6px 10px', borderRadius: 8, border: `2px solid #667eea`, fontSize: '0.95em', fontFamily: ff, outline: 'none', textAlign: 'center', background: inputBg, color: textColor }} />
+                  <span style={{ color: subTextColor, fontSize: '0.85em' }}>kcal</span>
+                  <button onClick={handleSaveTdee} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff }}>✅</button>
+                  <button onClick={() => setEditingTdee(false)} style={{ background: cancelBtnBg, color: cancelBtnColor, border: `1px solid ${cancelBtnBorder}`, padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>✕</button>
                 </>
               ) : (
                 <button onClick={() => { setEditTdeeValue(String(tdee)); setEditingTdee(true) }}
-                  style={{ background: 'linear-gradient(135deg, #f0f3ff 0%, #e8ecff 100%)', border: '2px solid #667eea', color: '#667eea', padding: '8px 18px', borderRadius: 10, cursor: 'pointer', fontSize: '0.95em', fontWeight: '700', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
+                  style={{ background: editGoalBtnBg, border: '2px solid #667eea', color: '#667eea', padding: '8px 18px', borderRadius: 10, cursor: 'pointer', fontSize: '0.95em', fontWeight: '700', fontFamily: ff, transition: 'all 0.2s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; (e.currentTarget as HTMLButtonElement).style.color = 'white' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #f0f3ff 0%, #e8ecff 100%)'; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}>
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = editGoalBtnBg; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}>
                   ✏️ {lang === 'en' ? 'Edit goal' : lang === 'es' ? 'Editar objetivo' : "Modifier l'objectif"}
                 </button>
               )}
@@ -904,7 +966,7 @@ export default function DashboardPage() {
 
           {/* MACROS PIECHART */}
           <div style={cardStyle}>
-            <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.macrosTitle}</h2>
+            <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.macrosTitle}</h2>
             {hasMacros ? (
               <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
                 <ResponsiveContainer width={220} height={220}>
@@ -912,7 +974,7 @@ export default function DashboardPage() {
                     <Pie data={macroData} cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={4} dataKey="value">
                       {macroData.map((entry, index) => (<Cell key={index} fill={entry.color} />))}
                     </Pie>
-                    <Tooltip formatter={(value) => [`${Number(value)} g`]} contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12 }} />
+                    <Tooltip formatter={(value) => [`${Number(value)} g`]} contentStyle={{ backgroundColor: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 12, color: textColor }} />
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ flex: 1, minWidth: 160 }}>
@@ -927,19 +989,19 @@ export default function DashboardPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <div style={{ width: 12, height: 12, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
-                            <span style={{ fontWeight: '600', color: '#333', fontSize: '0.95em' }}>{m.name}</span>
+                            <span style={{ fontWeight: '600', color: textColor, fontSize: '0.95em' }}>{m.name}</span>
                           </div>
                           <span style={{ fontWeight: 'bold', color: overGoal ? '#ff6b6b' : m.color, fontSize: '0.9em' }}>
                             {m.goal !== null ? `${m.value} g / ${m.goal} g` : `${m.value} g`}
                           </span>
                         </div>
-                        <div style={{ height: 8, background: '#f0f0f0', borderRadius: 4, overflow: 'hidden' }}>
+                        <div style={{ height: 8, background: macroBg, borderRadius: 4, overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${barWidth}%`, background: barColor, borderRadius: 4, transition: 'width 0.5s' }} />
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-                          <span style={{ fontSize: '0.72em', color: '#bbb' }}>{pct}%</span>
+                          <span style={{ fontSize: '0.72em', color: subTextColor }}>{pct}%</span>
                           {m.goal !== null && (
-                            <span style={{ fontSize: '0.72em', color: overGoal ? '#ff6b6b' : '#bbb' }}>
+                            <span style={{ fontSize: '0.72em', color: overGoal ? '#ff6b6b' : subTextColor }}>
                               {overGoal ? `+${m.value - m.goal} g ${t.exceeded_macro}` : `${barWidth}% ${t.of_goal}`}
                             </span>
                           )}
@@ -947,21 +1009,21 @@ export default function DashboardPage() {
                       </div>
                     )
                   })}
-                  <div style={{ marginTop: 4, padding: '10px 14px', background: '#f0f3ff', borderRadius: 10, fontSize: '1em', fontWeight: '700', color: '#444', textAlign: 'center' }}>
+                  <div style={{ marginTop: 4, padding: '10px 14px', background: macroTotalBg, borderRadius: 10, fontSize: '1em', fontWeight: '700', color: textColor, textAlign: 'center' }}>
                     Total : {totalProteines + totalGlucides + totalLipides} g
                     {hasGoals && <span style={{ color: '#764ba2', marginLeft: 6 }}>/ {(goalProteines ?? 0) + (goalGlucides ?? 0) + (goalLipides ?? 0)} g {t.goal.toLowerCase()}</span>}
                   </div>
                 </div>
               </div>
             ) : (
-              <p style={{ color: '#aaa', fontSize: '0.95em', textAlign: 'center', padding: '20px 0' }}>{t.macrosNoData}</p>
+              <p style={{ color: subTextColor, fontSize: '0.95em', textAlign: 'center', padding: '20px 0' }}>{t.macrosNoData}</p>
             )}
           </div>
 
-          {/* OBJECTIFS MACROS MODIFIABLES */}
+          {/* OBJECTIFS MACROS */}
           <div style={cardStyle}>
-            <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 6 }}>{t.macroGoalsTitle}</h2>
-            <p style={{ color: '#aaa', fontSize: '0.85em', marginBottom: 18 }}>{t.macroGoalsHint}</p>
+            <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 6 }}>{t.macroGoalsTitle}</h2>
+            <p style={{ color: subTextColor, fontSize: '0.85em', marginBottom: 18 }}>{t.macroGoalsHint}</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
               {[
                 { emoji: '🥩', label: t.proteines, color: '#667eea', val: editGoalProt, set: setEditGoalProt },
@@ -975,9 +1037,9 @@ export default function DashboardPage() {
                   </div>
                   <div style={{ position: 'relative' }}>
                     <input type="number" min="0" max="500" value={val} onChange={(e) => set(e.target.value)}
-                      onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                      onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = inputBorder}
                       style={{ ...inputStyle, textAlign: 'center', paddingRight: 30 }} />
-                    <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: '#aaa', pointerEvents: 'none' }}>g</span>
+                    <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: subTextColor, pointerEvents: 'none' }}>g</span>
                   </div>
                 </div>
               ))}
@@ -988,9 +1050,9 @@ export default function DashboardPage() {
                 {goalsSaved ? t.macroGoalsSaved : savingGoals ? t.macroGoalsSaving : t.macroGoalsSave}
               </button>
               <button onClick={handleResetGoals}
-                style={{ flex: 1, padding: '13px 16px', borderRadius: 12, border: '2px solid #ede9f8', background: '#fafbff', color: '#667eea', fontWeight: '600', fontSize: 14, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f0f3ff'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#667eea' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#fafbff'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#ede9f8' }}>
+                style={{ flex: 1, padding: '13px 16px', borderRadius: 12, border: `2px solid ${resetBtnBorder}`, background: resetBtnBg, color: '#667eea', fontWeight: '600', fontSize: 14, cursor: 'pointer', fontFamily: ff, transition: 'all 0.2s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = isDark ? '#252540' : '#f0f3ff'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#667eea' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = resetBtnBg; (e.currentTarget as HTMLButtonElement).style.borderColor = resetBtnBorder }}>
                 {t.macroGoalsReset}
               </button>
             </div>
@@ -999,51 +1061,49 @@ export default function DashboardPage() {
           {/* Calendrier & Historique */}
           <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', margin: 0 }}>{t.calendar}</h2>
+              <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', margin: 0 }}>{t.calendar}</h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <button onClick={() => handleMonthChange(-1)} style={{ background: '#f0f0f0', border: 'none', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>◀</button>
-                <span style={{ fontWeight: 'bold', color: '#333', minWidth: 120, textAlign: 'center' }}>{t.months[calendarMonth.getMonth()]} {calendarMonth.getFullYear()}</span>
-                <button onClick={() => handleMonthChange(1)} style={{ background: '#f0f0f0', border: 'none', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>▶</button>
+                <button onClick={() => handleMonthChange(-1)} style={{ background: calBtnBg, border: 'none', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: calBtnColor }}>◀</button>
+                <span style={{ fontWeight: 'bold', color: calMonthColor, minWidth: 120, textAlign: 'center' }}>{t.months[calendarMonth.getMonth()]} {calendarMonth.getFullYear()}</span>
+                <button onClick={() => handleMonthChange(1)} style={{ background: calBtnBg, border: 'none', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: calBtnColor }}>▶</button>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 16, marginBottom: 12, flexWrap: 'wrap' }}>
-              {[{ color: '#e8f5e9', label: '🟢 OK' }, { color: '#fff8e1', label: '🟡 > 85%' }, { color: '#ffebee', label: '🔴 Dépassé' }, { color: '#f5f5f5', label: '⚪ Vide' }].map((l) => (
+              {[{ color: isDark ? '#0a2e0f' : '#e8f5e9', label: '🟢 OK' }, { color: isDark ? '#2e2500' : '#fff8e1', label: '🟡 > 85%' }, { color: isDark ? '#2e0a0a' : '#ffebee', label: '🔴 Dépassé' }, { color: isDark ? '#1e1e2e' : '#f5f5f5', label: '⚪ Vide' }].map((l) => (
                 <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ width: 16, height: 16, borderRadius: 4, background: l.color, border: '1px solid #ddd' }} />
-                  <span style={{ fontSize: 12, color: '#666' }}>{l.label}</span>
+                  <div style={{ width: 16, height: 16, borderRadius: 4, background: l.color, border: `1px solid ${isDark ? '#333' : '#ddd'}` }} />
+                  <span style={{ fontSize: 12, color: subTextColor }}>{l.label}</span>
                 </div>
               ))}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
-              {t.days.map((d) => (<div key={d} style={{ textAlign: 'center', fontSize: 14, fontWeight: 'bold', color: '#999', padding: '6px 0' }}>{d}</div>))}
+              {t.days.map((d) => (<div key={d} style={{ textAlign: 'center', fontSize: 14, fontWeight: 'bold', color: subTextColor, padding: '6px 0' }}>{d}</div>))}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>{renderCalendar()}</div>
 
-            {/* ✅ NOUVEAU — Détail du jour avec édition macros */}
             {selectedDay && (
-              <div style={{ marginTop: 16, padding: 16, background: '#f8f9ff', borderRadius: 12, border: '2px solid #667eea' }}>
+              <div style={{ marginTop: 16, padding: 16, background: dayDetailBg, borderRadius: 12, border: `2px solid ${dayDetailBorder}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <h3 style={{ margin: 0, color: '#667eea', fontSize: '1em' }}>
+                  <h3 style={{ margin: 0, color: titleColor, fontSize: '1em' }}>
                     {t.mealsOfDay} {new Date(selectedDay + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </h3>
                   <button onClick={() => { setSelectedDay(null); setHistoryEditingId(null) }}
-                    style={{ background: '#e0e0e0', border: 'none', borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>{t.closeDetail}</button>
+                    style={{ background: cancelBtnBg, border: `1px solid ${cancelBtnBorder}`, color: cancelBtnColor, borderRadius: 8, padding: '4px 12px', cursor: 'pointer', fontSize: 13, fontFamily: ff }}>{t.closeDetail}</button>
                 </div>
                 {selectedDayMeals.length === 0 ? (
-                  <p style={{ color: '#999', fontSize: '0.9em', margin: 0 }}>{t.noDataDay}</p>
+                  <p style={{ color: subTextColor, fontSize: '0.9em', margin: 0 }}>{t.noDataDay}</p>
                 ) : (
                   <>
                     {selectedDayMeals.map((meal) => (
                       <div key={meal.id} style={{ marginBottom: 8 }}>
                         {historyEditingId === meal.id ? (
-                          // ✅ Formulaire d'édition inline dans l'historique
-                          <div style={{ background: 'white', border: '2px solid #667eea', borderRadius: 12, padding: 14 }}>
+                          <div style={{ background: editFormBg, border: `2px solid ${editFormBorder}`, borderRadius: 12, padding: 14 }}>
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                               <input type="text" value={historyEditNom} onChange={(e) => setHistoryEditNom(e.target.value)}
-                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                                 style={{ ...inputSmStyle, flex: 2, minWidth: 130 }} />
                               <input type="number" placeholder="kcal" value={historyEditCalories} onChange={(e) => setHistoryEditCalories(e.target.value)}
-                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                                 style={{ ...inputSmStyle, width: 90 }} />
                             </div>
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
@@ -1055,28 +1115,27 @@ export default function DashboardPage() {
                                 <div key={ph} style={{ flex: 1, minWidth: 80 }}>
                                   <div style={{ fontSize: 18, marginBottom: 4 }}>{emoji}</div>
                                   <input type="number" placeholder={ph} value={val} onChange={(e) => set(e.target.value)}
-                                    onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                    onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = inputBorder}
                                     style={{ ...inputSmStyle, textAlign: 'center' }} />
                                 </div>
                               ))}
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
                               <button onClick={handleHistorySaveEdit}
-                                style={{ flex: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                                style={{ flex: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: ff }}>
                                 {t.savEdit}
                               </button>
                               <button onClick={handleHistoryCancelEdit}
-                                style={{ flex: 1, background: '#e0e0e0', color: '#666', border: 'none', padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                                style={{ flex: 1, background: cancelBtnBg, color: cancelBtnColor, border: `1px solid ${cancelBtnBorder}`, padding: '8px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: ff }}>
                                 {t.cancelEdit}
                               </button>
                             </div>
                           </div>
                         ) : (
-                          // ✅ Affichage du repas avec macros + bouton ✏️
-                          <div style={{ background: 'white', borderRadius: 10, padding: '10px 14px', border: '1px solid #e0e0e0' }}>
+                          <div style={{ background: dayMealBg, borderRadius: 10, padding: '10px 14px', border: `1px solid ${dayMealBorder}` }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <div>
-                                <span style={{ color: '#333', fontWeight: '600' }}>{meal.nom}</span>
+                                <span style={{ color: textColor, fontWeight: '600' }}>{meal.nom}</span>
                                 {(meal.proteines || meal.glucides || meal.lipides) && (
                                   <div style={{ fontSize: '0.75em', marginTop: 3 }}>
                                     {meal.proteines ? <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {meal.proteines}g</span> : null}
@@ -1088,7 +1147,7 @@ export default function DashboardPage() {
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                                 <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
                                 <button onClick={() => handleHistoryEditClick(meal)}
-                                  style={{ background: '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✏️</button>
+                                  style={{ background: isDark ? '#1a1a35' : '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: ff }}>✏️</button>
                               </div>
                             </div>
                           </div>
@@ -1108,11 +1167,11 @@ export default function DashboardPage() {
           {/* Suivi du poids */}
           <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15, flexWrap: 'wrap', gap: 10 }}>
-              <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', margin: 0 }}>{t.weightTracking}</h2>
+              <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', margin: 0 }}>{t.weightTracking}</h2>
               <div style={{ display: 'flex', gap: 6 }}>
                 {([7, 15, 30] as const).map((d) => (
                   <button key={d} onClick={() => { setWeightPeriod(d); fetchWeightLogs(user.id, d) }}
-                    style={{ padding: '6px 14px', borderRadius: 20, border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s', background: weightPeriod === d ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f0f0f0', color: weightPeriod === d ? 'white' : '#666' }}>
+                    style={{ padding: '6px 14px', borderRadius: 20, border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, transition: 'all 0.2s', background: weightPeriod === d ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : calBtnBg, color: weightPeriod === d ? 'white' : calBtnColor }}>
                     {periodLabel(d)}
                   </button>
                 ))}
@@ -1121,7 +1180,7 @@ export default function DashboardPage() {
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
               <input type="number" step="0.1" placeholder={t.weightPlaceholder} value={newPoids}
                 onChange={(e) => setNewPoids(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSavePoids()}
-                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#e0e0e0'}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                 style={{ ...inputStyle, flex: 1, minWidth: 180 }} />
               <button onClick={handleSavePoids} disabled={savingPoids} style={{ ...btnPrimaryStyle, opacity: savingPoids ? 0.6 : 1 }}>
                 {savingPoids ? t.saving : t.save}
@@ -1130,30 +1189,30 @@ export default function DashboardPage() {
             {weightLogs.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={weightLogs} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  <XAxis dataKey="date" tick={{ fill: '#999', fontSize: 12 }} tickFormatter={(val) => new Date(val).toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'fr-FR', { day: 'numeric', month: 'short' })} />
-                  <YAxis tick={{ fill: '#999', fontSize: 12 }} domain={['auto', 'auto']} unit=" kg" />
-                  <Tooltip contentStyle={{ backgroundColor: 'white', border: '1px solid #667eea', borderRadius: 12, color: '#333' }}
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#2a2a4a' : '#e0e0e0'} />
+                  <XAxis dataKey="date" tick={{ fill: isDark ? '#666' : '#999', fontSize: 12 }} tickFormatter={(val) => new Date(val).toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'fr-FR', { day: 'numeric', month: 'short' })} />
+                  <YAxis tick={{ fill: isDark ? '#666' : '#999', fontSize: 12 }} domain={['auto', 'auto']} unit=" kg" />
+                  <Tooltip contentStyle={{ backgroundColor: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 12, color: textColor }}
                     labelFormatter={(val) => new Date(val).toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'es' ? 'es-ES' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                     formatter={(value) => [`${value} kg`, t.weightLabel]} />
                   <Line type="monotone" dataKey="poids" stroke="#667eea" strokeWidth={3} dot={{ fill: '#667eea', r: 5 }} activeDot={{ r: 7 }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p style={{ color: '#999', fontSize: '0.9em', textAlign: 'center', padding: 20 }}>{t.noWeightData}</p>
+              <p style={{ color: subTextColor, fontSize: '0.9em', textAlign: 'center', padding: 20 }}>{t.noWeightData}</p>
             )}
           </div>
 
           {/* Mes habituels */}
           {habituels.length > 0 && (
             <div style={cardStyle}>
-              <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.usuals}</h2>
+              <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.usuals}</h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {habituels.map((h) => (
                   <button key={h.nom} onClick={() => handleAddHabituel(h.nom, h.calories)}
-                    style={{ background: '#f8f9ff', border: '2px solid #667eea', color: '#667eea', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", transition: 'all 0.2s' }}
+                    style={{ background: habituelBg, border: '2px solid #667eea', color: '#667eea', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 'bold', fontSize: 14, fontFamily: ff, transition: 'all 0.2s' }}
                     onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; (e.currentTarget as HTMLButtonElement).style.color = 'white' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f8f9ff'; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}>
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = habituelBg; (e.currentTarget as HTMLButtonElement).style.color = '#667eea' }}>
                     {h.nom} · {h.calories} kcal
                   </button>
                 ))}
@@ -1163,7 +1222,7 @@ export default function DashboardPage() {
 
           {/* Export PDF / CSV */}
           <div style={cardStyle}>
-            <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.exportTitle}</h2>
+            <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.exportTitle}</h2>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button onClick={handleExportCSV} style={{ ...btnPrimaryStyle, background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', flex: 1, minWidth: 140, textAlign: 'center' }}>{t.exportCSV}</button>
               <button onClick={handleExportPDF} style={{ ...btnPrimaryStyle, flex: 1, minWidth: 140, textAlign: 'center' }}>{t.exportPDF}</button>
@@ -1172,12 +1231,12 @@ export default function DashboardPage() {
 
           {/* Recherche d'aliments */}
           <div style={cardStyle}>
-            <h2 style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.searchTitle}</h2>
+            <h2 style={{ color: titleColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.searchTitle}</h2>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
               <input type="text" placeholder={t.searchPlaceholder} value={searchQuery}
                 onChange={(e) => handleSearchQueryChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleFoodSearch()}
-                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                 style={{ ...inputStyle, flex: 1, minWidth: 200 }} />
               <button onClick={handleFoodSearch} disabled={searching} style={{ ...btnPrimaryStyle, opacity: searching ? 0.6 : 1 }}>
                 {searching ? t.searching : t.searchButton}
@@ -1187,7 +1246,7 @@ export default function DashboardPage() {
               <div style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <span style={{ fontSize: '0.78em', fontWeight: '700', color: 'white', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '3px 10px', borderRadius: 20 }}>⚡ {t.localResults}</span>
-                  <span style={{ fontSize: '0.8em', color: '#aaa' }}>{localFoodResults.length} résultat{localFoodResults.length > 1 ? 's' : ''}</span>
+                  <span style={{ fontSize: '0.8em', color: subTextColor }}>{localFoodResults.length} résultat{localFoodResults.length > 1 ? 's' : ''}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
                   {cuisinesInResults.map((c) => {
@@ -1196,27 +1255,27 @@ export default function DashboardPage() {
                     const label = c === 'all' ? t.filterAll : cuisineLabels[c][lang]
                     return (
                       <button key={c} onClick={() => setCuisineFilter(c)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", fontWeight: isActive ? '700' : '500', background: isActive ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f0f0f8', color: isActive ? 'white' : '#555', transition: 'all 0.2s', boxShadow: isActive ? '0 2px 8px rgba(102,126,234,0.4)' : 'none' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: ff, fontWeight: isActive ? '700' : '500', background: isActive ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : filterBtnBg, color: isActive ? 'white' : filterBtnColor, transition: 'all 0.2s', boxShadow: isActive ? '0 2px 8px rgba(102,126,234,0.4)' : 'none' }}>
                         <span>{flag}</span><span>{label}</span>
                       </button>
                     )
                   })}
                 </div>
                 {filteredLocalResults.map((food) => (
-                  <div key={food.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f0f3ff', borderRadius: 10, border: '1px solid #dde3f8', marginBottom: 6 }}>
+                  <div key={food.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: searchLocalBg, borderRadius: 10, border: `1px solid ${searchLocalBorder}`, marginBottom: 6 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                         <span style={{ fontSize: 16 }}>{cuisineFlags[food.cuisine]}</span>
-                        <span style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em' }}>{food.name[lang]}</span>
+                        <span style={{ fontWeight: 'bold', color: textColor, fontSize: '0.95em' }}>{food.name[lang]}</span>
                       </div>
-                      <div style={{ color: '#888', fontSize: '0.78em' }}>
+                      <div style={{ color: subTextColor, fontSize: '0.78em' }}>
                         {t.portion} : {food.portion[lang]}
                         {food.proteines && <span style={{ marginLeft: 8, color: '#667eea' }}>P:{food.proteines}g G:{food.glucides}g L:{food.lipides}g</span>}
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 10, flexShrink: 0 }}>
                       <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>{food.calories} kcal</span>
-                      <button onClick={() => handleUseLocalFood(food)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", whiteSpace: 'nowrap' }}>
+                      <button onClick={() => handleUseLocalFood(food)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, whiteSpace: 'nowrap' }}>
                         {t.searchPreFill}
                       </button>
                     </div>
@@ -1228,21 +1287,21 @@ export default function DashboardPage() {
               <div>
                 {searchResults.length > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <span style={{ fontSize: '0.78em', fontWeight: '700', color: '#555', background: '#f0f0f0', padding: '3px 10px', borderRadius: 20 }}>🌐 {t.offResults}</span>
-                    <span style={{ fontSize: '0.8em', color: '#aaa' }}>{searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}</span>
+                    <span style={{ fontSize: '0.78em', fontWeight: '700', color: isDark ? '#aaa' : '#555', background: isDark ? '#1e1e35' : '#f0f0f0', padding: '3px 10px', borderRadius: 20 }}>🌐 {t.offResults}</span>
+                    <span style={{ fontSize: '0.8em', color: subTextColor }}>{searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}</span>
                   </div>
                 )}
                 {searchError && <p style={{ color: '#e53935', fontSize: '0.9em', margin: '8px 0' }}>{searchError}</p>}
-                {searchDone && searchResults.length === 0 && !searchError && <p style={{ color: '#999', fontSize: '0.9em', margin: '8px 0' }}>{t.searchNoResults}</p>}
+                {searchDone && searchResults.length === 0 && !searchError && <p style={{ color: subTextColor, fontSize: '0.9em', margin: '8px 0' }}>{t.searchNoResults}</p>}
                 {searchResults.map((item, idx) => (
-                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f8f9ff', borderRadius: 10, border: '1px solid #e8e0f8', marginBottom: 6 }}>
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: searchOFFBg, borderRadius: 10, border: `1px solid ${searchOFFBorder}`, marginBottom: 6 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 'bold', color: '#333', fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
-                      {item.brand && <div style={{ color: '#999', fontSize: '0.8em' }}>{item.brand}</div>}
+                      <div style={{ fontWeight: 'bold', color: textColor, fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                      {item.brand && <div style={{ color: subTextColor, fontSize: '0.8em' }}>{item.brand}</div>}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 10, flexShrink: 0 }}>
-                      <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>{item.calories} kcal <span style={{ color: '#aaa', fontWeight: 'normal', fontSize: '0.8em' }}>{t.searchPer100g}</span></span>
-                      <button onClick={() => handleUseFood(item.name, item.calories)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", whiteSpace: 'nowrap' }}>
+                      <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>{item.calories} kcal <span style={{ color: subTextColor, fontWeight: 'normal', fontSize: '0.8em' }}>{t.searchPer100g}</span></span>
+                      <button onClick={() => handleUseFood(item.name, item.calories)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, whiteSpace: 'nowrap' }}>
                         {t.searchPreFill}
                       </button>
                     </div>
@@ -1254,15 +1313,15 @@ export default function DashboardPage() {
 
           {/* Formulaire ajout repas */}
           <div style={cardStyle}>
-            <h2 style={{ color: '#333', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.addMeal}</h2>
+            <h2 style={{ color: textColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.addMeal}</h2>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
               <input type="text" placeholder={t.mealNamePlaceholder} value={nomRepas}
                 onChange={(e) => setNomRepas(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddMeal()}
-                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                 style={{ ...inputStyle, flex: 2, minWidth: 180 }} />
               <input type="number" placeholder={t.caloriesPlaceholder} value={caloriesRepas}
                 onChange={(e) => setCaloriesRepas(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAddMeal()}
-                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                 style={{ ...inputStyle, width: 130 }} />
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -1277,7 +1336,7 @@ export default function DashboardPage() {
                     <span style={{ fontSize: 13, fontWeight: '700', color }}>{label}</span>
                   </div>
                   <input type="number" placeholder="g" value={val} onChange={(e) => set(e.target.value)}
-                    onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                    onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = inputBorder}
                     style={{ ...inputStyle, textAlign: 'center' }} />
                 </div>
               ))}
@@ -1289,12 +1348,12 @@ export default function DashboardPage() {
 
           {/* Liste repas du jour */}
           <div style={{ ...cardStyle, marginBottom: 30 }}>
-            <h2 style={{ color: '#333', fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>
+            <h2 style={{ color: textColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>
               {t.todayMeals}
               <span style={{ background: '#667eea', color: 'white', padding: '2px 8px', borderRadius: 12, fontSize: '0.75em', marginLeft: 8 }}>{meals.length}</span>
             </h2>
             {meals.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+              <div style={{ textAlign: 'center', padding: 40, color: subTextColor }}>
                 <div style={{ fontSize: '3em', marginBottom: 10 }}>🍽️</div>
                 <p>{t.noMeals}</p>
                 <p style={{ fontSize: '0.85em', marginTop: 5 }}>{t.noMealsHint}</p>
@@ -1304,13 +1363,13 @@ export default function DashboardPage() {
                 {meals.map((meal) => (
                   <div key={meal.id} style={{ marginBottom: 8 }}>
                     {editingId === meal.id ? (
-                      <div style={{ background: '#f8f9ff', border: '2px solid #667eea', borderRadius: 12, padding: 14 }}>
+                      <div style={{ background: editFormBg, border: `2px solid ${editFormBorder}`, borderRadius: 12, padding: 14 }}>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                           <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)}
-                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                             style={{ ...inputStyle, flex: 2, minWidth: 140 }} />
                           <input type="number" placeholder="kcal" value={editCalories} onChange={(e) => setEditCalories(e.target.value)}
-                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                            onFocus={e => e.target.style.borderColor = '#667eea'} onBlur={e => e.target.style.borderColor = inputBorder}
                             style={{ ...inputStyle, width: 100 }} />
                         </div>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -1324,29 +1383,29 @@ export default function DashboardPage() {
                                 <span style={{ fontSize: 16 }}>{emoji}</span>
                               </div>
                               <input type="number" placeholder={ph} value={val} onChange={(e) => set(e.target.value)}
-                                onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = '#ede9f8'}
+                                onFocus={e => e.target.style.borderColor = color} onBlur={e => e.target.style.borderColor = inputBorder}
                                 style={{ ...inputStyle, textAlign: 'center' }} />
                             </div>
                           ))}
                         </div>
                         <div style={{ display: 'flex', gap: 8 }}>
                           <button onClick={handleSaveEdit} style={{ ...btnPrimaryStyle, flex: 1, textAlign: 'center' }}>{t.savEdit}</button>
-                          <button onClick={handleCancelEdit} style={{ ...btnPrimaryStyle, background: '#e0e0e0', color: '#666', boxShadow: 'none', flex: 1, textAlign: 'center' }}>{t.cancelEdit}</button>
+                          <button onClick={handleCancelEdit} style={{ flex: 1, textAlign: 'center', background: cancelBtnBg, color: cancelBtnColor, border: `1px solid ${cancelBtnBorder}`, padding: '13px 26px', borderRadius: 12, fontWeight: '700', cursor: 'pointer', fontSize: 15, fontFamily: ff }}>{t.cancelEdit}</button>
                         </div>
                       </div>
                     ) : pendingDelete === meal.id ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff3f3', border: '2px solid #ffcdd2', borderRadius: 12, padding: '12px 15px' }}>
-                        <span style={{ color: '#e53935', fontWeight: 500 }}>{t.deletingIn}</span>
-                        <button onClick={handleCancelDelete} style={{ background: 'white', border: '2px solid #e0e0e0', color: '#666', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>{t.cancel}</button>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: deletePendingBg, border: `2px solid ${deletePendingBorder}`, borderRadius: 12, padding: '12px 15px' }}>
+                        <span style={{ color: deletePendingColor, fontWeight: 500 }}>{t.deletingIn}</span>
+                        <button onClick={handleCancelDelete} style={{ background: cancelBtnBg, border: `2px solid ${cancelBtnBorder}`, color: cancelBtnColor, padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontFamily: ff }}>{t.cancel}</button>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, background: '#f8f9ff', borderRadius: 12, border: '2px solid #f0f0f0', transition: 'all 0.2s' }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#667eea'; (e.currentTarget as HTMLDivElement).style.background = '#f0f3ff' }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#f0f0f0'; (e.currentTarget as HTMLDivElement).style.background = '#f8f9ff' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, background: mealRowBg, borderRadius: 12, border: `2px solid ${mealRowBorder}`, transition: 'all 0.2s' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = mealRowHoverBorder; (e.currentTarget as HTMLDivElement).style.background = mealRowHoverBg }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = mealRowBorder; (e.currentTarget as HTMLDivElement).style.background = mealRowBg }}>
                         <div>
-                          <span style={{ fontWeight: 'bold', color: '#333' }}>{meal.nom}</span>
+                          <span style={{ fontWeight: 'bold', color: textColor }}>{meal.nom}</span>
                           {(meal.proteines || meal.glucides || meal.lipides) && (
-                            <div style={{ fontSize: '0.75em', color: '#aaa', marginTop: 2 }}>
+                            <div style={{ fontSize: '0.75em', color: subTextColor, marginTop: 2 }}>
                               {meal.proteines ? <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {meal.proteines}g</span> : null}
                               {meal.glucides  ? <span style={{ color: '#f093fb', marginRight: 8 }}>🌾 {meal.glucides}g</span> : null}
                               {meal.lipides   ? <span style={{ color: '#43e97b' }}>🫒 {meal.lipides}g</span> : null}
@@ -1356,9 +1415,9 @@ export default function DashboardPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ color: '#667eea', fontWeight: 'bold' }}>{meal.calories} kcal</span>
                           <button onClick={() => handleEditClick(meal)}
-                            style={{ background: '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", fontWeight: 'bold', fontSize: 14 }}>✏️</button>
+                            style={{ background: isDark ? '#1a1a35' : '#f0f3ff', color: '#667eea', border: '2px solid #667eea', padding: '4px 10px', borderRadius: 6, cursor: 'pointer', fontFamily: ff, fontWeight: 'bold', fontSize: 14 }}>✏️</button>
                           <button onClick={() => handleDeleteClick(meal.id)}
-                            style={{ background: '#7e57c2', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>✕</button>
+                            style={{ background: '#7e57c2', color: 'white', border: 'none', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: ff }}>✕</button>
                         </div>
                       </div>
                     )}
