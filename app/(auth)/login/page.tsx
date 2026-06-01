@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTheme } from '@/app/providers'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { isDark, toggle } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -15,9 +17,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true)
     setError('')
-
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-
     if (error) {
       setError(error.message)
       setLoading(false)
@@ -26,11 +26,32 @@ export default function LoginPage() {
     }
   }
 
+  // ─── Palette ─────────────────────────────────────────────────────────────
+  const pageBg   = isDark ? 'bg-gray-950'  : 'bg-gray-100'
+  const cardBg   = isDark ? 'bg-gray-900'  : 'bg-white'
+  const titleCl  = isDark ? 'text-white'   : 'text-gray-900'
+  const subCl    = isDark ? 'text-gray-400': 'text-gray-500'
+  const inputCl  = isDark
+    ? 'w-full bg-gray-800 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-500'
+    : 'w-full bg-gray-100 text-gray-900 px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400 border border-gray-200 placeholder-gray-400'
+  const linkCl   = isDark ? 'text-green-400 hover:underline' : 'text-green-600 hover:underline'
+  const toggleBg = isDark ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950">
-      <div className="bg-gray-900 p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-white mb-2">Connexion 👋</h1>
-        <p className="text-gray-400 mb-6">Bon retour sur Calorie Tracker Pro</p>
+    <div className={`min-h-screen flex items-center justify-center ${pageBg} transition-colors duration-300`}>
+      <div className={`${cardBg} p-8 rounded-2xl shadow-xl w-full max-w-md relative transition-colors duration-300`}>
+
+        {/* Toggle dark mode */}
+        <button
+          onClick={toggle}
+          aria-label="Basculer thème"
+          className={`absolute top-4 right-4 p-2 rounded-full text-lg transition-colors ${toggleBg}`}
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+
+        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>Connexion 👋</h1>
+        <p className={`${subCl} mb-6`}>Bon retour sur Kalorix</p>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-4">
@@ -44,14 +65,16 @@ export default function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-800 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            className={inputCl}
           />
           <input
             type="password"
             placeholder="Mot de passe"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-gray-800 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            className={inputCl}
           />
           <button
             onClick={handleLogin}
@@ -62,12 +85,13 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p className="text-gray-400 text-center mt-6">
+        <p className={`${subCl} text-center mt-6`}>
           Pas encore de compte ?{' '}
-          <Link href="/register" className="text-green-400 hover:underline">
+          <Link href="/register" className={linkCl}>
             S'inscrire
           </Link>
         </p>
+
       </div>
     </div>
   )
