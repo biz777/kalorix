@@ -10,6 +10,117 @@ import {
 import { searchLocalFoods, cuisineFlags, cuisineLabels, type LocalFood } from '@/lib/foodDatabase'
 import { useTheme } from '@/app/providers'
 
+// ─────────────────────────────────────────────────────────────────────────────
+// GUIDE RAPIDE — Données des 5 étapes (3 langues)
+// ─────────────────────────────────────────────────────────────────────────────
+const guideSteps = {
+  fr: [
+    {
+      icon: '🎯',
+      title: 'Configure ton profil TDEE',
+      description: 'Rends-toi dans la section TDEE pour renseigner ton âge, ta taille, ton poids et ton niveau d\'activité. Kalorix calcule alors ton objectif calorique journalier personnalisé.',
+      tip: '💡 Tu peux modifier ton objectif à tout moment via le bouton « Modifier l\'objectif » sur le dashboard.',
+    },
+    {
+      icon: '➕',
+      title: 'Ajoute tes repas',
+      description: 'Utilise le formulaire « Ajouter un repas » ou la recherche d\'aliments pour enregistrer ce que tu manges. Tape le nom, les calories, et optionnellement les macros.',
+      tip: '💡 La section « Mes habituels » affiche tes repas les plus fréquents pour un ajout en un clic !',
+    },
+    {
+      icon: '🥩',
+      title: 'Suis tes macros',
+      description: 'Renseigne tes protéines, glucides et lipides pour voir la répartition en graphique. Définis tes objectifs macros dans la section dédiée pour suivre tes progrès.',
+      tip: '💡 Les couleurs : 🔵 Protéines · 🩷 Glucides · 🟢 Lipides',
+    },
+    {
+      icon: '⚖️',
+      title: 'Enregistre ton poids',
+      description: 'Saisis ton poids du jour dans la section « Suivi du poids ». Kalorix trace automatiquement une courbe sur 7, 15 ou 30 jours pour visualiser ta progression.',
+      tip: '💡 Pèse-toi le matin à jeun pour des mesures cohérentes.',
+    },
+    {
+      icon: '📅',
+      title: 'Explore l\'historique',
+      description: 'Le calendrier coloré te montre d\'un coup d\'œil les jours où tu es resté dans ton objectif (🟢), proche (🟡) ou au-dessus (🔴). Clique sur un jour pour voir le détail de tes repas.',
+      tip: '💡 Tu peux exporter tes données en CSV ou PDF via la section Export.',
+    },
+  ],
+  en: [
+    {
+      icon: '🎯',
+      title: 'Set up your TDEE profile',
+      description: 'Go to the TDEE section to enter your age, height, weight and activity level. Kalorix then calculates your personalized daily calorie goal.',
+      tip: '💡 You can update your goal anytime using the "Edit goal" button on the dashboard.',
+    },
+    {
+      icon: '➕',
+      title: 'Log your meals',
+      description: 'Use the "Add a meal" form or the food search to log what you eat. Enter the name, calories, and optionally the macros.',
+      tip: '💡 The "My usuals" section shows your most frequent meals for one-click adding!',
+    },
+    {
+      icon: '🥩',
+      title: 'Track your macros',
+      description: 'Enter your protein, carbs and fat to see the breakdown chart. Set your macro goals in the dedicated section to track your progress.',
+      tip: '💡 Colors: 🔵 Protein · 🩷 Carbs · 🟢 Fat',
+    },
+    {
+      icon: '⚖️',
+      title: 'Log your weight',
+      description: 'Enter today\'s weight in the "Weight tracking" section. Kalorix automatically plots a curve over 7, 15 or 30 days so you can visualize your progress.',
+      tip: '💡 Weigh yourself in the morning on an empty stomach for consistent readings.',
+    },
+    {
+      icon: '📅',
+      title: 'Explore your history',
+      description: 'The color-coded calendar shows at a glance which days you stayed within your goal (🟢), were close (🟡), or went over (🔴). Click a day to see your meal details.',
+      tip: '💡 You can export your data as CSV or PDF via the Export section.',
+    },
+  ],
+  es: [
+    {
+      icon: '🎯',
+      title: 'Configura tu perfil TDEE',
+      description: 'Ve a la sección TDEE para introducir tu edad, altura, peso y nivel de actividad. Kalorix calcula entonces tu objetivo calórico diario personalizado.',
+      tip: '💡 Puedes modificar tu objetivo en cualquier momento con el botón "Editar objetivo" del dashboard.',
+    },
+    {
+      icon: '➕',
+      title: 'Añade tus comidas',
+      description: 'Usa el formulario "Añadir comida" o la búsqueda de alimentos para registrar lo que comes. Escribe el nombre, las calorías y opcionalmente las macros.',
+      tip: '💡 La sección "Mis habituales" muestra tus comidas más frecuentes para añadirlas en un clic.',
+    },
+    {
+      icon: '🥩',
+      title: 'Sigue tus macros',
+      description: 'Introduce tus proteínas, carbohidratos y grasas para ver el gráfico de distribución. Define tus objetivos de macros en la sección correspondiente para seguir tu progreso.',
+      tip: '💡 Colores: 🔵 Proteínas · 🩷 Carbohidratos · 🟢 Grasas',
+    },
+    {
+      icon: '⚖️',
+      title: 'Registra tu peso',
+      description: 'Introduce el peso del día en la sección "Seguimiento de peso". Kalorix traza automáticamente una curva de 7, 15 o 30 días para visualizar tu progreso.',
+      tip: '💡 Pésate por la mañana en ayunas para mediciones coherentes.',
+    },
+    {
+      icon: '📅',
+      title: 'Explora el historial',
+      description: 'El calendario de colores te muestra de un vistazo qué días te mantuviste en tu objetivo (🟢), estuviste cerca (🟡) o lo superaste (🔴). Haz clic en un día para ver el detalle de tus comidas.',
+      tip: '💡 Puedes exportar tus datos en CSV o PDF desde la sección Exportar.',
+    },
+  ],
+}
+
+const guideLabels = {
+  fr: { title: '❓ Guide rapide', close: 'Fermer', finish: '✅ Terminer', prev: '◀ Précédent', next: 'Suivant ▶', step: 'Étape' },
+  en: { title: '❓ Quick Guide', close: 'Close', finish: '✅ Done', prev: '◀ Previous', next: 'Next ▶', step: 'Step' },
+  es: { title: '❓ Guía rápida', close: 'Cerrar', finish: '✅ Terminar', prev: '◀ Anterior', next: 'Siguiente ▶', step: 'Paso' },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TRANSLATIONS (inchangées)
+// ─────────────────────────────────────────────────────────────────────────────
 const translations = {
   fr: {
     title: 'Tracker de calories 50+',
@@ -249,6 +360,250 @@ interface WeightLog {
 
 const CUISINE_ORDER: Array<LocalFood['cuisine'] | 'all'> = ['all', 'daily', 'us', 'ca', 'ma', 'fr', 'it', 'mx', 'jp']
 
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPOSANT MODAL GUIDE RAPIDE
+// ─────────────────────────────────────────────────────────────────────────────
+function GuideModal({
+  lang,
+  isDark,
+  onClose,
+}: {
+  lang: Lang
+  isDark: boolean
+  onClose: () => void
+}) {
+  const [step, setStep] = useState(0)
+  const steps = guideSteps[lang]
+  const labels = guideLabels[lang]
+  const current = steps[step]
+  const total = steps.length
+
+  const modalBg    = isDark ? '#1a1a2e' : 'white'
+  const overlayBg  = 'rgba(0,0,0,0.65)'
+  const textColor  = isDark ? '#c0c0d8' : '#333'
+  const subColor   = isDark ? '#7777aa' : '#888'
+  const tipBg      = isDark ? '#0f0f1e' : '#f0f3ff'
+  const tipBorder  = isDark ? '#2a2a4a' : '#d0d8ff'
+  const progressBg = isDark ? '#1e1e35' : '#e8ecff'
+  const ff         = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+
+  // Fermer sur clic overlay
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  // Fermer sur Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  return (
+    <div
+      onClick={handleOverlayClick}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: overlayBg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+        backdropFilter: 'blur(4px)',
+        animation: 'fadeIn 0.2s ease',
+      }}
+    >
+      <div style={{
+        background: modalBg,
+        borderRadius: 24,
+        width: '100%',
+        maxWidth: 500,
+        boxShadow: isDark
+          ? '0 24px 80px rgba(0,0,0,0.7)'
+          : '0 24px 80px rgba(102,126,234,0.25)',
+        overflow: 'hidden',
+        fontFamily: ff,
+        animation: 'slideUp 0.25s ease',
+      }}>
+
+        {/* ── Header ── */}
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          padding: '22px 24px 18px',
+          position: 'relative',
+        }}>
+          {/* Cercles décoratifs */}
+          <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
+          <div style={{ position: 'absolute', bottom: -20, left: -20, width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+            <h2 style={{ margin: 0, color: 'white', fontSize: '1.25em', fontWeight: '800', letterSpacing: '-0.3px' }}>
+              {labels.title}
+            </h2>
+            <button
+              onClick={onClose}
+              aria-label="Fermer"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white', borderRadius: '50%',
+                width: 34, height: 34, cursor: 'pointer',
+                fontSize: '1.1em', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: ff, transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.3)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+            >✕</button>
+          </div>
+
+          {/* Barre de progression */}
+          <div style={{ marginTop: 16, position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8em', fontWeight: '600' }}>
+                {labels.step} {step + 1} / {total}
+              </span>
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8em' }}>
+                {Math.round(((step + 1) / total) * 100)}%
+              </span>
+            </div>
+            <div style={{ height: 6, background: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{
+                height: '100%',
+                width: `${((step + 1) / total) * 100}%`,
+                background: 'white',
+                borderRadius: 3,
+                transition: 'width 0.4s ease',
+              }} />
+            </div>
+            {/* Indicateurs de points */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+              {steps.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => setStep(i)}
+                  title={s.title}
+                  style={{
+                    width: 28, height: 28, borderRadius: '50%', border: 'none', cursor: 'pointer',
+                    background: i <= step ? 'white' : 'rgba(255,255,255,0.2)',
+                    color: i <= step ? '#667eea' : 'rgba(255,255,255,0.6)',
+                    fontSize: '0.75em', fontWeight: '800', fontFamily: ff,
+                    transition: 'all 0.25s',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transform: i === step ? 'scale(1.2)' : 'scale(1)',
+                    boxShadow: i === step ? '0 2px 8px rgba(0,0,0,0.25)' : 'none',
+                  }}
+                >
+                  {i < step ? '✓' : i + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Corps ── */}
+        <div style={{ padding: '28px 28px 24px' }}>
+
+          {/* Icône + titre de l'étape */}
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div style={{
+              fontSize: '3.5em', marginBottom: 12,
+              animation: 'stepPop 0.3s ease',
+            }}>
+              {current.icon}
+            </div>
+            <h3 style={{
+              margin: 0, color: '#667eea',
+              fontSize: '1.2em', fontWeight: '800',
+              letterSpacing: '-0.3px',
+            }}>
+              {current.title}
+            </h3>
+          </div>
+
+          {/* Description */}
+          <p style={{
+            color: textColor, fontSize: '0.95em', lineHeight: 1.65,
+            margin: '0 0 16px', textAlign: 'center',
+          }}>
+            {current.description}
+          </p>
+
+          {/* Tip */}
+          <div style={{
+            background: tipBg, border: `1px solid ${tipBorder}`,
+            borderRadius: 12, padding: '12px 16px',
+            fontSize: '0.85em', color: subColor, lineHeight: 1.55,
+          }}>
+            {current.tip}
+          </div>
+        </div>
+
+        {/* ── Footer navigation ── */}
+        <div style={{
+          padding: '0 28px 24px',
+          display: 'flex', gap: 10, alignItems: 'center',
+        }}>
+          {/* Bouton Précédent */}
+          <button
+            onClick={() => setStep(s => Math.max(0, s - 1))}
+            disabled={step === 0}
+            style={{
+              flex: 1, padding: '12px 0', borderRadius: 12, border: 'none', cursor: step === 0 ? 'not-allowed' : 'pointer',
+              fontWeight: '700', fontSize: '0.9em', fontFamily: ff, transition: 'all 0.2s',
+              background: isDark ? '#1e1e35' : '#f0f0f8',
+              color: step === 0 ? (isDark ? '#3a3a5a' : '#ccc') : (isDark ? '#aaa' : '#666'),
+              opacity: step === 0 ? 0.5 : 1,
+            }}
+          >
+            {labels.prev}
+          </button>
+
+          {/* Bouton Suivant / Terminer */}
+          {step < total - 1 ? (
+            <button
+              onClick={() => setStep(s => s + 1)}
+              style={{
+                flex: 2, padding: '12px 0', borderRadius: 12, border: 'none', cursor: 'pointer',
+                fontWeight: '700', fontSize: '0.95em', fontFamily: ff,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white', boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 20px rgba(102,126,234,0.5)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 15px rgba(102,126,234,0.4)' }}
+            >
+              {labels.next}
+            </button>
+          ) : (
+            <button
+              onClick={onClose}
+              style={{
+                flex: 2, padding: '12px 0', borderRadius: 12, border: 'none', cursor: 'pointer',
+                fontWeight: '700', fontSize: '0.95em', fontFamily: ff,
+                background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                color: 'white', boxShadow: '0 4px 15px rgba(67,233,123,0.35)',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+            >
+              {labels.finish}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Animations CSS inline */}
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+        @keyframes stepPop { from { transform: scale(0.7); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+      `}</style>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PAGE PRINCIPALE
+// ─────────────────────────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const router = useRouter()
   const { isDark, toggle } = useTheme()
@@ -312,6 +667,9 @@ export default function DashboardPage() {
 
   const [editingTdee,   setEditingTdee]   = useState(false)
   const [editTdeeValue, setEditTdeeValue] = useState('')
+
+  // ── GUIDE RAPIDE STATE ──
+  const [showGuide, setShowGuide] = useState(false)
 
   const t = translations[lang]
 
@@ -877,9 +1235,15 @@ export default function DashboardPage() {
 
   return (
     <div suppressHydrationWarning style={{ minHeight: '100vh', background: pageBg, padding: '30px 16px', fontFamily: ff, transition: 'background 0.3s' }}>
+
+      {/* ── MODAL GUIDE RAPIDE ── */}
+      {showGuide && (
+        <GuideModal lang={lang} isDark={isDark} onClose={() => setShowGuide(false)} />
+      )}
+
       <div style={{ maxWidth: 820, margin: '0 auto', background: wrapperBg, borderRadius: 28, boxShadow: '0 32px 80px rgba(60,30,120,0.4)', padding: 0, overflow: 'hidden', transition: 'background 0.3s' }}>
 
-        {/* Header — toujours sombre, inchangé */}
+        {/* Header */}
         <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '32px 30px 26px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
           <div style={{ position: 'absolute', bottom: -40, left: -40, width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
@@ -900,6 +1264,25 @@ export default function DashboardPage() {
             <button onClick={toggle} aria-label="Basculer thème"
               style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 12px', borderRadius: 20, cursor: 'pointer', fontSize: '1.1em', fontFamily: ff, transition: 'all 0.2s' }}>
               {isDark ? '☀️' : '🌙'}
+            </button>
+
+            {/* ─── BOUTON GUIDE RAPIDE ─── */}
+            <button
+              onClick={() => setShowGuide(true)}
+              aria-label="Guide rapide"
+              title={guideLabels[lang].title}
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white', padding: '7px 14px', borderRadius: 20,
+                cursor: 'pointer', fontSize: '0.9em', fontFamily: ff,
+                fontWeight: '600', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: 5,
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.28)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)' }}
+            >
+              ❓ <span>{lang === 'en' ? 'Guide' : lang === 'es' ? 'Guía' : 'Guide'}</span>
             </button>
 
             <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>
