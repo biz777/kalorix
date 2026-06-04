@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const content = {
+type Lang = "fr" | "en" | "es";
+
+const content: Record<Lang, { title: string; lastUpdated: string; backLabel: string; sections: { heading: string; body: string }[] }> = {
   fr: {
     title: "Politique de Confidentialité",
     lastUpdated: "Dernière mise à jour : juin 2026",
@@ -134,29 +137,13 @@ const content = {
   },
 };
 
-type Lang = "fr" | "en" | "es";
-
 export default function PrivacyPage() {
   const router = useRouter();
-
-  // Read lang from localStorage or default to "fr"
-  const [lang, setLang] = (typeof window !== "undefined"
-    ? [
-        (localStorage.getItem("lang") as Lang) || "fr",
-        (l: Lang) => {
-          localStorage.setItem("lang", l);
-        },
-      ]
-    : ["fr", () => {}]) as [Lang, (l: Lang) => void];
-
-  const [currentLang, setCurrentLang] = (function () {
-    const { useState } = require("react");
-    return useState<Lang>(
-      typeof window !== "undefined"
-        ? ((localStorage.getItem("lang") as Lang) || "fr")
-        : "fr"
-    );
-  })();
+  const [currentLang, setCurrentLang] = useState<Lang>(
+    typeof window !== "undefined"
+      ? ((localStorage.getItem("lang") as Lang) || "fr")
+      : "fr"
+  );
 
   const t = content[currentLang];
 
@@ -174,8 +161,6 @@ export default function PrivacyPage() {
             </svg>
             {t.backLabel}
           </button>
-
-          {/* Language switcher */}
           <div className="flex gap-1">
             {(["fr", "en", "es"] as Lang[]).map((l) => (
               <button
@@ -196,7 +181,6 @@ export default function PrivacyPage() {
 
       {/* Content */}
       <main className="max-w-3xl mx-auto px-4 py-12">
-        {/* Title */}
         <div className="mb-10">
           <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +192,6 @@ export default function PrivacyPage() {
           <p className="text-sm text-gray-500 dark:text-gray-400">{t.lastUpdated}</p>
         </div>
 
-        {/* Sections */}
         <div className="space-y-8">
           {t.sections.map((section, i) => (
             <section key={i} className="border-l-2 border-emerald-400 pl-5">
@@ -222,7 +205,6 @@ export default function PrivacyPage() {
           ))}
         </div>
 
-        {/* Footer */}
         <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-400">
           © {new Date().getFullYear()} CLICKANDDEALONLINE LLC — Kalorix
         </div>
