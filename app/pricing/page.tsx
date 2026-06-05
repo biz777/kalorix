@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
 import { useTheme } from "@/app/providers";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const PRICE_ID_MONTHLY = "pri_01ktagbshae0scvhh0tgwzjq7f";
 const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";
@@ -83,17 +84,28 @@ export default function Pricing() {
     });
   }, []);
 
-  const openCheckout = (priceId: string, plan: "monthly" | "annual") => {
+  // ✅ Corrigé : récupère user_id et l'injecte dans customData
+  const openCheckout = async (priceId: string, plan: "monthly" | "annual") => {
     if (!paddle) return;
     setLoading(plan);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("Utilisateur non connecté");
+      setLoading(null);
+      return;
+    }
+
     paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
+      customData: { user_id: user.id }, // ✅ indispensable pour le webhook
       settings: {
         displayMode: "overlay",
         theme: "dark",
         locale: lang === "es" ? "es" : lang === "en" ? "en" : "fr",
       },
     });
+
     setTimeout(() => setLoading(null), 1500);
   };
 
