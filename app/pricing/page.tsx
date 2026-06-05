@@ -6,9 +6,10 @@ import { useTheme } from "@/app/providers";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-const PRICE_ID_MONTHLY = "pri_01ktagbshae0scvhh0tgwzjq7f";
-const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";
-const PADDLE_CLIENT_TOKEN = "live_b49544053d0f20bbece59cfb6a5";
+// ⚠️ SANDBOX — Remettre les tokens production après le test
+const PRICE_ID_MONTHLY = "pri_01ktcj4ea7qbj4x0ww7hrwtsvw"; // sandbox
+const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";  // production (pas encore créé en sandbox)
+const PADDLE_CLIENT_TOKEN = "test_d2803268e04055f6f939a541ac3"; // sandbox
 
 type Lang = "fr" | "en" | "es";
 
@@ -77,14 +78,13 @@ export default function Pricing() {
 
   useEffect(() => {
     initializePaddle({
-      environment: "production",
+      environment: "sandbox", // ⚠️ SANDBOX — remettre "production" après le test
       token: PADDLE_CLIENT_TOKEN,
     }).then((paddleInstance) => {
       if (paddleInstance) setPaddle(paddleInstance);
     });
   }, []);
 
-  // ✅ Corrigé : récupère user_id et l'injecte dans customData
   const openCheckout = async (priceId: string, plan: "monthly" | "annual") => {
     if (!paddle) return;
     setLoading(plan);
