@@ -119,7 +119,7 @@ const guideLabels = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TRANSLATIONS (inchangées)
+// TRANSLATIONS
 // ─────────────────────────────────────────────────────────────────────────────
 const translations = {
   fr: {
@@ -384,15 +384,12 @@ function GuideModal({
   const subColor   = isDark ? '#7777aa' : '#888'
   const tipBg      = isDark ? '#0f0f1e' : '#f0f3ff'
   const tipBorder  = isDark ? '#2a2a4a' : '#d0d8ff'
-  const progressBg = isDark ? '#1e1e35' : '#e8ecff'
   const ff         = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
 
-  // Fermer sur clic overlay
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose()
   }
 
-  // Fermer sur Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
@@ -423,17 +420,13 @@ function GuideModal({
         fontFamily: ff,
         animation: 'slideUp 0.25s ease',
       }}>
-
-        {/* ── Header ── */}
         <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           padding: '22px 24px 18px',
           position: 'relative',
         }}>
-          {/* Cercles décoratifs */}
           <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
           <div style={{ position: 'absolute', bottom: -20, left: -20, width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             <h2 style={{ margin: 0, color: 'white', fontSize: '1.25em', fontWeight: '800', letterSpacing: '-0.3px' }}>
               {labels.title}
@@ -453,8 +446,6 @@ function GuideModal({
               onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             >✕</button>
           </div>
-
-          {/* Barre de progression */}
           <div style={{ marginTop: 16, position: 'relative' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8em', fontWeight: '600' }}>
@@ -473,7 +464,6 @@ function GuideModal({
                 transition: 'width 0.4s ease',
               }} />
             </div>
-            {/* Indicateurs de points */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
               {steps.map((s, i) => (
                 <button
@@ -498,50 +488,24 @@ function GuideModal({
           </div>
         </div>
 
-        {/* ── Corps ── */}
         <div style={{ padding: '28px 28px 24px' }}>
-
-          {/* Icône + titre de l'étape */}
           <div style={{ textAlign: 'center', marginBottom: 20 }}>
-            <div style={{
-              fontSize: '3.5em', marginBottom: 12,
-              animation: 'stepPop 0.3s ease',
-            }}>
+            <div style={{ fontSize: '3.5em', marginBottom: 12, animation: 'stepPop 0.3s ease' }}>
               {current.icon}
             </div>
-            <h3 style={{
-              margin: 0, color: '#667eea',
-              fontSize: '1.2em', fontWeight: '800',
-              letterSpacing: '-0.3px',
-            }}>
+            <h3 style={{ margin: 0, color: '#667eea', fontSize: '1.2em', fontWeight: '800', letterSpacing: '-0.3px' }}>
               {current.title}
             </h3>
           </div>
-
-          {/* Description */}
-          <p style={{
-            color: textColor, fontSize: '0.95em', lineHeight: 1.65,
-            margin: '0 0 16px', textAlign: 'center',
-          }}>
+          <p style={{ color: textColor, fontSize: '0.95em', lineHeight: 1.65, margin: '0 0 16px', textAlign: 'center' }}>
             {current.description}
           </p>
-
-          {/* Tip */}
-          <div style={{
-            background: tipBg, border: `1px solid ${tipBorder}`,
-            borderRadius: 12, padding: '12px 16px',
-            fontSize: '0.85em', color: subColor, lineHeight: 1.55,
-          }}>
+          <div style={{ background: tipBg, border: `1px solid ${tipBorder}`, borderRadius: 12, padding: '12px 16px', fontSize: '0.85em', color: subColor, lineHeight: 1.55 }}>
             {current.tip}
           </div>
         </div>
 
-        {/* ── Footer navigation ── */}
-        <div style={{
-          padding: '0 28px 24px',
-          display: 'flex', gap: 10, alignItems: 'center',
-        }}>
-          {/* Bouton Précédent */}
+        <div style={{ padding: '0 28px 24px', display: 'flex', gap: 10, alignItems: 'center' }}>
           <button
             onClick={() => setStep(s => Math.max(0, s - 1))}
             disabled={step === 0}
@@ -555,8 +519,6 @@ function GuideModal({
           >
             {labels.prev}
           </button>
-
-          {/* Bouton Suivant / Terminer */}
           {step < total - 1 ? (
             <button
               onClick={() => setStep(s => s + 1)}
@@ -591,7 +553,6 @@ function GuideModal({
         </div>
       </div>
 
-      {/* Animations CSS inline */}
       <style>{`
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideUp { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
@@ -668,7 +629,6 @@ export default function DashboardPage() {
   const [editingTdee,   setEditingTdee]   = useState(false)
   const [editTdeeValue, setEditTdeeValue] = useState('')
 
-  // ── GUIDE RAPIDE STATE ──
   const [showGuide, setShowGuide] = useState(false)
 
   const t = translations[lang]
@@ -1151,7 +1111,6 @@ export default function DashboardPage() {
     )
   }
 
-  // ─── Palette dark mode ────────────────────────────────────────────────────
   const pageBg        = isDark ? '#0d0d1a' : 'linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)'
   const wrapperBg     = isDark ? '#13131f' : '#fafbff'
   const cardBg        = isDark ? '#1a1a2e' : 'white'
@@ -1233,10 +1192,11 @@ export default function DashboardPage() {
   ]
   const periodLabel = (d: number) => lang === 'fr' ? `${d}j` : `${d}d`
 
+  const isPro = profile?.plan && profile.plan !== 'free'
+
   return (
     <div suppressHydrationWarning style={{ minHeight: '100vh', background: pageBg, padding: '30px 16px', fontFamily: ff, transition: 'background 0.3s' }}>
 
-      {/* ── MODAL GUIDE RAPIDE ── */}
       {showGuide && (
         <GuideModal lang={lang} isDark={isDark} onClose={() => setShowGuide(false)} />
       )}
@@ -1260,13 +1220,13 @@ export default function DashboardPage() {
             ))}
             <div style={{ width: 1, height: 22, background: 'rgba(255,255,255,0.25)', margin: '0 2px' }} />
 
-            {/* ─── TOGGLE DARK MODE ─── */}
+            {/* TOGGLE DARK MODE */}
             <button onClick={toggle} aria-label="Basculer thème"
               style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 12px', borderRadius: 20, cursor: 'pointer', fontSize: '1.1em', fontFamily: ff, transition: 'all 0.2s' }}>
               {isDark ? '☀️' : '🌙'}
             </button>
 
-            {/* ─── BOUTON GUIDE RAPIDE ─── */}
+            {/* BOUTON GUIDE RAPIDE */}
             <button
               onClick={() => setShowGuide(true)}
               aria-label="Guide rapide"
@@ -1284,6 +1244,19 @@ export default function DashboardPage() {
             >
               ❓ <span>{lang === 'en' ? 'Guide' : lang === 'es' ? 'Guía' : 'Guide'}</span>
             </button>
+
+            {/* ─── BADGE PLAN ─── */}
+            <div style={{
+              background: isPro
+                ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+                : 'rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              color: 'white', padding: '7px 14px', borderRadius: 20,
+              fontSize: '0.85em', fontWeight: '700',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              {isPro ? '⭐ Pro' : '🆓 Free'}
+            </div>
 
             <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>
               {t.logout}
