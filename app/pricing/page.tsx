@@ -11,9 +11,7 @@ const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";  // production
 const PADDLE_CLIENT_TOKEN = "live_b49544053d0f20bbece59cfb6a5"; // production
 
 type Lang = "fr" | "en" | "es";
-const PRICE_ID_MONTHLY = "pri_01ktagbshae0scvhh0tgwzjq7f"; // production
-const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";  // production
-const PADDLE_CLIENT_TOKEN = "live_b49544053d0f20bbece59cfb6a5"; // production
+
 const content = {
   fr: {
     title: "Choisissez votre formule",
