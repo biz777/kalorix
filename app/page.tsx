@@ -17,7 +17,7 @@ const content = {
     hero_cta: 'Commencer l\'essai',
     hero_login: 'Déjà membre ? Se connecter',
     stats: [
-      { value: '116+', label: 'Aliments en base' },
+      { value: '+3M', label: 'Aliments en base' },
       { value: '3', label: 'Langues disponibles' },
       { value: '✅', label: 'Essai gratuit' },
     ],
@@ -26,7 +26,7 @@ const content = {
       { icon: '🔥', title: 'Suivi calorique', desc: 'Ajoutez vos repas en quelques secondes et visualisez votre progression journalière en temps réel.' },
       { icon: '🥩', title: 'Macros détaillées', desc: 'Protéines, glucides, lipides — suivez chaque macro avec des objectifs personnalisés et des alertes intelligentes.' },
       { icon: '⚖️', title: 'Suivi du poids', desc: 'Enregistrez votre poids chaque jour et observez votre évolution sur 7, 15 ou 30 jours avec une courbe claire.' },
-      { icon: '🌍', title: 'Cuisines du monde', desc: 'Une bibliothèque de plus de 116 aliments couvrant les cuisines française, marocaine, américaine, italienne et plus.' },
+      { icon: '🌍', title: 'Cuisines du monde', desc: 'Accès à plus de 3 millions d\'aliments via Open Food Facts, couvrant toutes les cuisines du monde.' },
       { icon: '📅', title: 'Historique complet', desc: 'Calendrier interactif pour retrouver vos repas de n\'importe quel jour passé, avec export CSV et PDF.' },
       { icon: '🎯', title: 'Objectifs sur mesure', desc: 'TDEE calculé selon votre profil, âge, activité et objectif. Modifiable à tout moment depuis le tableau de bord.' },
     ],
@@ -51,7 +51,7 @@ const content = {
     hero_cta: 'Start free trial',
     hero_login: 'Already a member? Sign in',
     stats: [
-      { value: '116+', label: 'Foods in database' },
+      { value: '+3M', label: 'Foods in database' },
       { value: '3', label: 'Languages' },
       { value: '✅', label: 'Free trial' },
     ],
@@ -60,7 +60,7 @@ const content = {
       { icon: '🔥', title: 'Calorie tracking', desc: 'Add your meals in seconds and visualize your daily progress in real time.' },
       { icon: '🥩', title: 'Detailed macros', desc: 'Proteins, carbs, fats — track every macro with personalized goals and smart alerts.' },
       { icon: '⚖️', title: 'Weight tracking', desc: 'Log your weight daily and watch your progress over 7, 15 or 30 days with a clear chart.' },
-      { icon: '🌍', title: 'World cuisines', desc: 'A library of 116+ foods covering French, Moroccan, American, Italian cuisines and more.' },
+      { icon: '🌍', title: 'World cuisines', desc: 'Access to over 3 million foods via Open Food Facts, covering all world cuisines.' },
       { icon: '📅', title: 'Full history', desc: 'Interactive calendar to find meals from any past day, with CSV and PDF export.' },
       { icon: '🎯', title: 'Custom goals', desc: 'TDEE calculated from your profile, age, activity and goal. Editable anytime from the dashboard.' },
     ],
@@ -85,7 +85,7 @@ const content = {
     hero_cta: 'Empezar prueba gratis',
     hero_login: '¿Ya eres miembro? Iniciar sesión',
     stats: [
-      { value: '116+', label: 'Alimentos en base' },
+      { value: '+3M', label: 'Alimentos en base' },
       { value: '3', label: 'Idiomas disponibles' },
       { value: '✅', label: 'Prueba gratuita' },
     ],
@@ -94,7 +94,7 @@ const content = {
       { icon: '🔥', title: 'Seguimiento calórico', desc: 'Añade tus comidas en segundos y visualiza tu progreso diario en tiempo real.' },
       { icon: '🥩', title: 'Macros detalladas', desc: 'Proteínas, carbohidratos, grasas — sigue cada macro con objetivos personalizados y alertas inteligentes.' },
       { icon: '⚖️', title: 'Seguimiento del peso', desc: 'Registra tu peso cada día y observa tu evolución en 7, 15 o 30 días con una gráfica clara.' },
-      { icon: '🌍', title: 'Cocinas del mundo', desc: 'Una biblioteca de más de 116 alimentos que cubre las cocinas francesa, marroquí, americana, italiana y más.' },
+      { icon: '🌍', title: 'Cocinas del mundo', desc: 'Acceso a más de 3 millones de alimentos vía Open Food Facts, cubriendo todas las cocinas del mundo.' },
       { icon: '📅', title: 'Historial completo', desc: 'Calendario interactivo para encontrar comidas de cualquier día pasado, con exportación CSV y PDF.' },
       { icon: '🎯', title: 'Objetivos a medida', desc: 'TDEE calculado según tu perfil, edad, actividad y objetivo. Modificable en cualquier momento desde el panel.' },
     ],
@@ -240,7 +240,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* HERO — inchangé, déjà sombre */}
+      {/* HERO */}
       <div style={{
         background: 'linear-gradient(160deg, #1a1040 0%, #3b2d8f 45%, #764ba2 100%)',
         padding: '140px 24px 100px', textAlign: 'center', position: 'relative', overflow: 'hidden',
@@ -337,7 +337,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* TESTIMONY BAND — inchangé */}
+      {/* TESTIMONY BAND */}
       <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 24px', textAlign: 'center' }}>
         <div style={{ fontSize: '3em', marginBottom: 16 }}>👴🏻👵🏻</div>
         <h2 style={{ color: 'white', fontSize: 'clamp(1.4em, 3vw, 2em)', fontWeight: '800', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
