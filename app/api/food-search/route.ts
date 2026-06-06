@@ -33,10 +33,13 @@ export async function GET(request: NextRequest) {
       const results = (data.products ?? [])
         .filter((p: any) => p.product_name && p.nutriments?.['energy-kcal_100g'])
         .map((p: any) => ({
-          name: p.product_name,
-          brand: p.brands ?? '',
-          calories: Math.round(p.nutriments['energy-kcal_100g']),
-        }))
+  name: p.product_name,
+  brand: p.brands ?? '',
+  calories: Math.round(p.nutriments['energy-kcal_100g']),
+  proteines: p.nutriments['proteins_100g'] ? Math.round(p.nutriments['proteins_100g']) : null,
+  glucides: p.nutriments['carbohydrates_100g'] ? Math.round(p.nutriments['carbohydrates_100g']) : null,
+  lipides: p.nutriments['fat_100g'] ? Math.round(p.nutriments['fat_100g']) : null,
+}))
         .slice(0, 5)
 
       return NextResponse.json({ results })
