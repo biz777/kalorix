@@ -1256,17 +1256,31 @@ const [searchResults, setSearchResults] = useState<{
             </button>
 
             {/* ─── BADGE PLAN ─── */}
-            <div style={{
-              background: isPro
-                ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-                : 'rgba(255,255,255,0.15)',
-              border: '1px solid rgba(255,255,255,0.3)',
-              color: 'white', padding: '7px 14px', borderRadius: 20,
-              fontSize: '0.85em', fontWeight: '700',
-              display: 'flex', alignItems: 'center', gap: 5,
-            }}>
-              {isPro ? '⭐ Pro' : '🆓 Free'}
-            </div>
+            {isPro ? (
+              <div style={{
+                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white', padding: '7px 14px', borderRadius: 20,
+                fontSize: '0.85em', fontWeight: '700',
+                display: 'flex', alignItems: 'center', gap: 5,
+              }}>
+                ⭐ Pro
+              </div>
+            ) : (
+              <button onClick={() => router.push('/pricing')} style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white', padding: '7px 14px', borderRadius: 20,
+                fontSize: '0.85em', fontWeight: '700',
+                display: 'flex', alignItems: 'center', gap: 5,
+                cursor: 'pointer', fontFamily: ff, transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.28)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+              >
+                🆓 Free → Pro
+              </button>
+            )}
 
             <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>
               {t.logout}
