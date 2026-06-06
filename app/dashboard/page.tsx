@@ -1660,20 +1660,26 @@ const [searchResults, setSearchResults] = useState<{
                 {searchError && <p style={{ color: '#e53935', fontSize: '0.9em', margin: '8px 0' }}>{searchError}</p>}
                 {searchDone && searchResults.length === 0 && !searchError && <p style={{ color: subTextColor, fontSize: '0.9em', margin: '8px 0' }}>{t.searchNoResults}</p>}
                 {searchResults.map((item, idx) => (
-                  <div style={{ flex: 1, minWidth: 0 }}>
-  <div style={{ fontWeight: 'bold', color: textColor, fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
-  {item.brand && <div style={{ color: subTextColor, fontSize: '0.8em' }}>{item.brand}</div>}
-  {(item.proteines || item.glucides || item.lipides) && (
-    <div style={{ fontSize: '0.75em', marginTop: 2 }}>
-      {item.proteines != null && <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {item.proteines}g</span>}
-      {item.glucides  != null && <span style={{ color: '#f093fb', marginRight: 8 }}>🌾 {item.glucides}g</span>}
-      {item.lipides   != null && <span style={{ color: '#43e97b' }}>🫒 {item.lipides}g</span>}
-    </div>
-  )}
-</div>
-<button onClick={() => handleUseFood(item.name, item.calories, item.proteines, item.glucides, item.lipides)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, whiteSpace: 'nowrap' }}>
-  {t.searchPreFill}
-</button>
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: searchOFFBg, borderRadius: 10, border: `1px solid ${searchOFFBorder}`, marginBottom: 6 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 'bold', color: textColor, fontSize: '0.95em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                      {item.brand && <div style={{ color: subTextColor, fontSize: '0.8em' }}>{item.brand}</div>}
+                      {(item.proteines || item.glucides || item.lipides) && (
+                        <div style={{ fontSize: '0.75em', marginTop: 2 }}>
+                          {item.proteines != null && <span style={{ color: '#667eea', marginRight: 8 }}>🥩 {item.proteines}g</span>}
+                          {item.glucides  != null && <span style={{ color: '#f093fb', marginRight: 8 }}>🌾 {item.glucides}g</span>}
+                          {item.lipides   != null && <span style={{ color: '#43e97b' }}>🫒 {item.lipides}g</span>}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 10, flexShrink: 0 }}>
+                      <span style={{ color: '#764ba2', fontWeight: 'bold', fontSize: '0.95em' }}>{item.calories} kcal <span style={{ color: subTextColor, fontWeight: 'normal', fontSize: '0.8em' }}>{t.searchPer100g}</span></span>
+                      <button onClick={() => handleUseFood(item.name, item.calories, item.proteines, item.glucides, item.lipides)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, whiteSpace: 'nowrap' }}>
+                        {t.searchPreFill}
+                      </button>
+                    </div>
+                  </div>
+                ))}
           </div>
 
           {/* Formulaire ajout repas */}
