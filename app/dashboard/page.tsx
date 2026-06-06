@@ -1679,9 +1679,10 @@ const [searchResults, setSearchResults] = useState<{
                       </button>
                     </div>
                   </div>
-                ))}
+))}
+              </div>
+            )}
           </div>
-
           {/* Formulaire ajout repas */}
           <div style={cardStyle}>
             <h2 style={{ color: textColor, fontWeight: 'bold', fontSize: '1.2em', marginBottom: 15 }}>{t.addMeal}</h2>
