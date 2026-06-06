@@ -1671,9 +1671,7 @@ const [searchResults, setSearchResults] = useState<{
     </div>
   )}
 </div>
- <button onClick={() => handleUseFood(item.name, item.calories, item.proteines, item.glucides, item.lipides)} ...>
-  {t.searchPreFill}
-</button>                         
+<button onClick={() => handleUseFood(item.name, item.calories, item.proteines, item.glucides, item.lipides)} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 'bold', fontSize: 13, fontFamily: ff, whiteSpace: 'nowrap' }}>
   {t.searchPreFill}
 </button>
           </div>
