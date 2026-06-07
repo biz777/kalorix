@@ -9,12 +9,11 @@ type Lang = 'fr' | 'en' | 'es'
 const content = {
   fr: {
     nav_login: 'Se connecter',
-    nav_start: 'Commencer l\'essai',
-    nav_pricing: 'Tarifs',
+    nav_start: 'Commencer gratuitement',
     hero_tag: '🥗 Nutrition intelligente pour les 50+',
     hero_title: 'Reprenez le contrôle de votre alimentation',
     hero_sub: 'Kalorix vous aide à suivre vos calories, macros et poids au quotidien — simplement, sans prise de tête.',
-    hero_cta: 'Commencer l\'essai',
+    hero_cta: 'Commencer gratuitement',
     hero_login: 'Déjà membre ? Se connecter',
     stats: [
       { value: '+3M', label: 'Aliments en base' },
@@ -33,8 +32,8 @@ const content = {
     testimony_title: 'Conçu pour les 50+',
     testimony_sub: 'Une interface claire, des fonctionnalités essentielles, sans complexité inutile.',
     cta_title: 'Prêt à commencer ?',
-    cta_sub: 'Sans engagement, essai inclus.',
-    cta_btn: 'Créer mon compte',
+    cta_sub: 'Sans engagement · 100% gratuit pour démarrer.',
+    cta_btn: 'Créer mon compte gratuit',
     footer: '© 2026 Kalorix · Nutrition intelligente pour les 50+',
     footer_pricing: 'Tarifs',
     footer_terms: 'Conditions d\'utilisation',
@@ -43,12 +42,11 @@ const content = {
   },
   en: {
     nav_login: 'Sign in',
-    nav_start: 'Start free trial',
-    nav_pricing: 'Pricing',
+    nav_start: 'Get started free',
     hero_tag: '🥗 Smart nutrition for 50+',
     hero_title: 'Take back control of your nutrition',
     hero_sub: 'Kalorix helps you track calories, macros and weight every day — simply, without the hassle.',
-    hero_cta: 'Start free trial',
+    hero_cta: 'Get started free',
     hero_login: 'Already a member? Sign in',
     stats: [
       { value: '+3M', label: 'Foods in database' },
@@ -67,8 +65,8 @@ const content = {
     testimony_title: 'Designed for 50+',
     testimony_sub: 'A clear interface, essential features, no unnecessary complexity.',
     cta_title: 'Ready to start?',
-    cta_sub: 'No commitment, free trial included.',
-    cta_btn: 'Create my account',
+    cta_sub: 'No commitment · 100% free to get started.',
+    cta_btn: 'Create my free account',
     footer: '© 2026 Kalorix · Smart nutrition for 50+',
     footer_pricing: 'Pricing',
     footer_terms: 'Terms of Service',
@@ -77,12 +75,11 @@ const content = {
   },
   es: {
     nav_login: 'Iniciar sesión',
-    nav_start: 'Empezar prueba gratis',
-    nav_pricing: 'Precios',
+    nav_start: 'Empezar gratis',
     hero_tag: '🥗 Nutrición inteligente para los 50+',
     hero_title: 'Recupera el control de tu alimentación',
     hero_sub: 'Kalorix te ayuda a seguir tus calorías, macros y peso cada día — de forma sencilla, sin complicaciones.',
-    hero_cta: 'Empezar prueba gratis',
+    hero_cta: 'Empezar gratis',
     hero_login: '¿Ya eres miembro? Iniciar sesión',
     stats: [
       { value: '+3M', label: 'Alimentos en base' },
@@ -101,8 +98,8 @@ const content = {
     testimony_title: 'Diseñado para los 50+',
     testimony_sub: 'Una interfaz clara, funciones esenciales, sin complejidad innecesaria.',
     cta_title: '¿Listo para empezar?',
-    cta_sub: 'Sin compromiso, prueba incluida.',
-    cta_btn: 'Crear mi cuenta',
+    cta_sub: 'Sin compromiso · 100% gratis para empezar.',
+    cta_btn: 'Crear mi cuenta gratis',
     footer: '© 2026 Kalorix · Nutrición inteligente para los 50+',
     footer_pricing: 'Precios',
     footer_terms: 'Términos de uso',
@@ -158,7 +155,6 @@ export default function LandingPage() {
 
   const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
 
-  // ─── Couleurs dark mode ───────────────────────────────────────────────────
   const pageBg        = isDark ? '#0d0d1a' : '#fafbff'
   const cardBg        = isDark ? '#1a1a2e' : 'white'
   const cardBorder    = isDark ? 'rgba(102,126,234,0.2)' : 'rgba(102,126,234,0.1)'
@@ -169,9 +165,6 @@ export default function LandingPage() {
   const footerColor   = isDark ? '#555577' : '#aaa'
   const navBgScrolled = isDark ? 'rgba(13,13,26,0.95)' : 'rgba(255,255,255,0.95)'
   const navTitleColor = scrolled ? '#667eea' : 'white'
-  const ctaBtnBorder  = isDark ? '#667eea' : '#667eea'
-  const ctaBtnBg      = isDark ? '#1a1a2e' : 'white'
-  const ctaBtnColor   = '#667eea'
 
   return (
     <div style={{ fontFamily: ff, background: pageBg, minHeight: '100vh', overflowX: 'hidden', transition: 'background 0.3s' }}>
@@ -207,27 +200,17 @@ export default function LandingPage() {
 
           <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.3)', margin: '0 4px' }} />
 
-          {/* ─── TOGGLE DARK MODE ─── */}
           <button onClick={toggle}
             aria-label="Basculer thème"
             style={{
               background: scrolled ? (isDark ? '#2a2a4a' : '#f0f2ff') : 'rgba(255,255,255,0.15)',
               border: 'none', borderRadius: 20, cursor: 'pointer',
-              padding: '6px 10px', fontSize: '1.1em',
-              transition: 'all 0.2s',
+              padding: '6px 10px', fontSize: '1.1em', transition: 'all 0.2s',
             }}>
             {isDark ? '☀️' : '🌙'}
           </button>
 
-          <button onClick={() => router.push('/pricing')}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', fontFamily: ff,
-              fontWeight: '600', fontSize: 13,
-              color: scrolled ? '#667eea' : 'white',
-              transition: 'all 0.2s', padding: '7px 12px',
-            }}>
-            {t.nav_pricing}
-          </button>
+          {/* ✅ Bouton "Se connecter" uniquement — plus de bouton Pricing */}
           <button onClick={() => router.push('/login')}
             style={{
               background: scrolled ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(255,255,255,0.2)',
@@ -270,32 +253,21 @@ export default function LandingPage() {
           }}>
             {t.hero_sub}
           </p>
+
+          {/* ✅ Un seul bouton CTA — plus de bouton Pricing */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button onClick={() => router.push('/login')}
-                style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white', border: 'none', padding: '16px 40px', borderRadius: 50,
-                  fontSize: '1.1em', fontWeight: '800', cursor: 'pointer', fontFamily: ff,
-                  boxShadow: '0 8px 32px rgba(102,126,234,0.5)', letterSpacing: '0.2px',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 12px 40px rgba(102,126,234,0.65)' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(102,126,234,0.5)' }}>
-                {t.hero_cta} →
-              </button>
-              <button onClick={() => router.push('/pricing')}
-                style={{
-                  background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(255,255,255,0.5)',
-                  color: 'white', padding: '16px 40px', borderRadius: 50,
-                  fontSize: '1.1em', fontWeight: '700', cursor: 'pointer', fontFamily: ff,
-                  transition: 'transform 0.2s, background 0.2s',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.25)' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)' }}>
-                {t.nav_pricing} 💰
-              </button>
-            </div>
+            <button onClick={() => router.push('/login')}
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white', border: 'none', padding: '16px 48px', borderRadius: 50,
+                fontSize: '1.1em', fontWeight: '800', cursor: 'pointer', fontFamily: ff,
+                boxShadow: '0 8px 32px rgba(102,126,234,0.5)', letterSpacing: '0.2px',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 12px 40px rgba(102,126,234,0.65)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(102,126,234,0.5)' }}>
+              {t.hero_cta} →
+            </button>
             <button onClick={() => router.push('/login')}
               style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.9em', fontFamily: ff, textDecoration: 'underline', padding: 0 }}>
               {t.hero_login}
@@ -352,36 +324,27 @@ export default function LandingPage() {
           {t.cta_title}
         </h2>
         <p style={{ color: textColor, fontSize: '1em', marginBottom: 36, transition: 'color 0.3s' }}>{t.cta_sub}</p>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => router.push('/login')}
-            style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white', border: 'none', padding: '16px 44px', borderRadius: 50,
-              fontSize: '1.1em', fontWeight: '800', cursor: 'pointer', fontFamily: ff,
-              boxShadow: '0 8px 32px rgba(102,126,234,0.4)', letterSpacing: '0.2px',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 12px 40px rgba(102,126,234,0.6)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(102,126,234,0.4)' }}>
-            {t.cta_btn} →
-          </button>
-          <button onClick={() => router.push('/pricing')}
-            style={{
-              background: ctaBtnBg, border: `2px solid ${ctaBtnBorder}`, color: ctaBtnColor,
-              padding: '16px 44px', borderRadius: 50, fontSize: '1.1em', fontWeight: '700',
-              cursor: 'pointer', fontFamily: ff, transition: 'all 0.3s',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = isDark ? '#2a2a4a' : '#f0f2ff' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = ctaBtnBg }}>
-            {t.nav_pricing} 💰
-          </button>
-        </div>
+
+        {/* ✅ Un seul bouton CTA — plus de bouton Pricing */}
+        <button onClick={() => router.push('/login')}
+          style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white', border: 'none', padding: '16px 48px', borderRadius: 50,
+            fontSize: '1.1em', fontWeight: '800', cursor: 'pointer', fontFamily: ff,
+            boxShadow: '0 8px 32px rgba(102,126,234,0.4)', letterSpacing: '0.2px',
+            transition: 'transform 0.2s, box-shadow 0.2s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 12px 40px rgba(102,126,234,0.6)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(102,126,234,0.4)' }}>
+          {t.cta_btn} →
+        </button>
       </div>
 
       {/* FOOTER */}
       <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: `1px solid ${footerBorder}`, color: footerColor, fontSize: '0.85em', transition: 'all 0.3s' }}>
         <div style={{ marginBottom: 12, display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => router.push('/pricing')} style={{ background: 'none', border: 'none', color: '#667eea', cursor: 'pointer', fontSize: '0.85em', fontFamily: ff, fontWeight: '600' }}>{t.footer_pricing}</button>
+          {/* ✅ Lien Tarifs gardé en footer uniquement — discret mais accessible */}
+          <button onClick={() => router.push('/pricing')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_pricing}</button>
           <button onClick={() => router.push('/terms')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_terms}</button>
           <button onClick={() => router.push('/privacy')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_privacy}</button>
           <button onClick={() => router.push('/refund')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_refund}</button>
