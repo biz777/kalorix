@@ -1267,20 +1267,36 @@ const [searchResults, setSearchResults] = useState<{
                 ⭐ Pro
               </div>
             ) : (
-              <button onClick={() => router.push('/pricing')} style={{
-                background: 'rgba(255,255,255,0.15)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white', padding: '7px 14px', borderRadius: 20,
-                fontSize: '0.85em', fontWeight: '700',
-                display: 'flex', alignItems: 'center', gap: 5,
-                cursor: 'pointer', fontFamily: ff, transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.28)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-              >
-                🆓 Free → Pro
-              </button>
-            )}
+  <>
+    <style>{`
+      @keyframes upgradePulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.5); }
+        50% { box-shadow: 0 0 0 7px rgba(255, 214, 0, 0); }
+      }
+    `}</style>
+    <button onClick={() => router.push('/pricing')} style={{
+      background: 'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
+      border: 'none',
+      color: '#1a1040', padding: '7px 16px', borderRadius: 20,
+      fontSize: '0.85em', fontWeight: '800',
+      display: 'flex', alignItems: 'center', gap: 6,
+      cursor: 'pointer', fontFamily: ff, transition: 'all 0.2s',
+      animation: 'upgradePulse 2s infinite',
+      letterSpacing: '0.2px',
+    }}
+    onMouseEnter={e => {
+      (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.06)'
+      ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 18px rgba(255,210,0,0.55)'
+    }}
+    onMouseLeave={e => {
+      (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'
+      ;(e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'
+    }}
+    >
+      ⚡ {lang === 'en' ? 'Upgrade to Pro' : lang === 'es' ? 'Mejorar a Pro' : 'Passer à Pro'}
+    </button>
+  </>
+)}
 
             <button onClick={handleLogout} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '7px 16px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontFamily: ff }}>
               {t.logout}
