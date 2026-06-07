@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
 import { useTheme } from "@/app/providers";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 
-const PRICE_ID_MONTHLY = "pri_01ktagbshae0scvhh0tgwzjq7f"; // production
-const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";  // production
-const PADDLE_CLIENT_TOKEN = "live_b49544053d0f20bbece59cfb6a5"; // production
+const PRICE_ID_MONTHLY = "pri_01ktagbshae0scvhh0tgwzjq7f";
+const PRICE_ID_ANNUAL  = "pri_01ktagvsjaqeqk2sqaar85p5ps";
+const PADDLE_CLIENT_TOKEN = "live_b49544053d0f20bbece59cfb6a5";
 
 type Lang = "fr" | "en" | "es";
 
@@ -67,6 +66,8 @@ export default function Pricing() {
   const { isDark, toggle } = useTheme();
   const router = useRouter();
   const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
+  const [paddleReady, setPaddleReady] = useState(false);
+  const [paddleError, setPaddleError] = useState(false);
   const [loading, setLoading] = useState<"monthly" | "annual" | null>(null);
   const [lang, setLang] = useState<Lang>("fr");
 
@@ -77,27 +78,31 @@ export default function Pricing() {
 
   useEffect(() => {
     initializePaddle({
-      environment: "production", // plus "sandbox"
+      environment: "production",
       token: PADDLE_CLIENT_TOKEN,
     }).then((paddleInstance) => {
-      if (paddleInstance) setPaddle(paddleInstance);
+      if (paddleInstance) {
+        setPaddle(paddleInstance);
+        setPaddleReady(true);
+      } else {
+        setPaddleError(true);
+      }
+    }).catch(() => {
+      setPaddleError(true);
     });
   }, []);
 
-  const openCheckout = async (priceId: string, plan: "monthly" | "annual") => {
-    if (!paddle) return;
-    setLoading(plan);
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("Utilisateur non connecté");
-      setLoading(null);
+  // ✅ Plus de vérification auth — le client peut être nouveau
+  const openCheckout = (priceId: string, plan: "monthly" | "annual") => {
+    if (!paddle) {
+      // Paddle pas encore prêt → on réessaie dans 1 seconde
+      setTimeout(() => openCheckout(priceId, plan), 1000);
       return;
     }
+    setLoading(plan);
 
     paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: { user_id: user.id }, // ✅ indispensable pour le webhook
       settings: {
         displayMode: "overlay",
         theme: "dark",
@@ -106,6 +111,13 @@ export default function Pricing() {
     });
 
     setTimeout(() => setLoading(null), 1500);
+  };
+
+  const getButtonLabel = (plan: "monthly" | "annual", cta: string) => {
+    if (paddleError) return lang === "fr" ? "Erreur — rechargez la page" : lang === "es" ? "Error — recarga la página" : "Error — please reload";
+    if (loading === plan) return content[lang].loading;
+    if (!paddleReady) return content[lang].loading;
+    return cta;
   };
 
   const t = content[lang];
@@ -117,11 +129,11 @@ export default function Pricing() {
       {/* Toggle + retour */}
       <div style={{ position: "fixed", top: 20, right: 24, display: "flex", gap: 10, zIndex: 50 }}>
         <button onClick={() => router.back()}
-          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 16px", borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: ff, fontWeight: "600", transition: "all 0.2s" }}>
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 16px", borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: ff, fontWeight: "600" }}>
           {t.back}
         </button>
         <button onClick={toggle} aria-label="Basculer thème"
-          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 12px", borderRadius: 20, cursor: "pointer", fontSize: "1.1em", transition: "all 0.2s" }}>
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", color: "white", padding: "8px 12px", borderRadius: 20, cursor: "pointer", fontSize: "1.1em" }}>
           {isDark ? "☀️" : "🌙"}
         </button>
       </div>
@@ -152,17 +164,19 @@ export default function Pricing() {
                 <li key={item} style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.92em", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>{item}</li>
               ))}
             </ul>
+            {/* ✅ disabled uniquement si loading — jamais à cause de paddle */}
             <button
               onClick={() => openCheckout(PRICE_ID_MONTHLY, "monthly")}
-              disabled={!paddle || loading === "monthly"}
+              disabled={loading === "monthly" || paddleError}
               style={{
-                width: "100%", padding: "14px", borderRadius: 50, border: "none", cursor: paddle ? "pointer" : "not-allowed",
+                width: "100%", padding: "14px", borderRadius: 50, border: "none",
+                cursor: (loading === "monthly" || paddleError) ? "not-allowed" : "pointer",
                 background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 color: "white", fontSize: "1em", fontWeight: "700", fontFamily: ff,
-                opacity: !paddle || loading === "monthly" ? 0.7 : 1,
+                opacity: (loading === "monthly" || paddleError) ? 0.7 : 1,
                 transition: "all 0.2s",
               }}>
-              {loading === "monthly" ? t.loading : t.monthly_cta}
+              {getButtonLabel("monthly", t.monthly_cta)}
             </button>
           </div>
 
@@ -179,17 +193,19 @@ export default function Pricing() {
                 <li key={item} style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.92em", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>{item}</li>
               ))}
             </ul>
+            {/* ✅ disabled uniquement si loading — jamais à cause de paddle */}
             <button
               onClick={() => openCheckout(PRICE_ID_ANNUAL, "annual")}
-              disabled={!paddle || loading === "annual"}
+              disabled={loading === "annual" || paddleError}
               style={{
-                width: "100%", padding: "14px", borderRadius: 50, border: "none", cursor: paddle ? "pointer" : "not-allowed",
+                width: "100%", padding: "14px", borderRadius: 50, border: "none",
+                cursor: (loading === "annual" || paddleError) ? "not-allowed" : "pointer",
                 background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
                 color: "white", fontSize: "1em", fontWeight: "700", fontFamily: ff,
-                opacity: !paddle || loading === "annual" ? 0.7 : 1,
+                opacity: (loading === "annual" || paddleError) ? 0.7 : 1,
                 transition: "all 0.2s",
               }}>
-              {loading === "annual" ? t.loading : t.annual_cta}
+              {getButtonLabel("annual", t.annual_cta)}
             </button>
           </div>
 
