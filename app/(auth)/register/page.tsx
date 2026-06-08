@@ -2,18 +2,28 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTheme } from '@/app/providers'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { isDark, toggle } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Détecte la langue depuis l'URL (?lang=fr) ou le navigateur
+  const getLang = (): string => {
+    const urlLang = searchParams.get('lang')
+    if (urlLang && ['fr', 'en', 'es'].includes(urlLang)) return urlLang
+    const browserLang = navigator.language?.substring(0, 2)
+    if (['fr', 'en', 'es'].includes(browserLang)) return browserLang
+    return 'en'
+  }
 
   const handleRegister = async () => {
     setLoading(true)
@@ -25,7 +35,15 @@ export default function RegisterPage() {
       return
     }
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const lang = getLang()
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { lang },
+      },
+    })
 
     if (error) {
       setError(error.message)
@@ -34,10 +52,11 @@ export default function RegisterPage() {
     }
 
     if (data.user) {
-      await supabase.from('profiles').insert({
+      await supabase.from('profiles').upsert({
         id: data.user.id,
         email: data.user.email,
-        plan: 'free'
+        plan: 'free',
+        lang,
       })
     }
 
