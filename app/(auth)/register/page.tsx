@@ -5,8 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTheme } from '@/app/providers'
+import { Suspense } from 'react'
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isDark, toggle } = useTheme()
@@ -16,7 +17,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Détecte la langue depuis l'URL (?lang=fr) ou le navigateur
   const getLang = (): string => {
     const urlLang = searchParams.get('lang')
     if (urlLang && ['fr', 'en', 'es'].includes(urlLang)) return urlLang
@@ -63,7 +63,6 @@ export default function RegisterPage() {
     router.push('/dashboard')
   }
 
-  // ─── Palette ─────────────────────────────────────────────────────────────
   const pageBg   = isDark ? 'bg-gray-950'  : 'bg-gray-100'
   const cardBg   = isDark ? 'bg-gray-900'  : 'bg-white'
   const titleCl  = isDark ? 'text-white'   : 'text-gray-900'
@@ -78,66 +77,7 @@ export default function RegisterPage() {
     <div className={`min-h-screen flex items-center justify-center ${pageBg} transition-colors duration-300`}>
       <div className={`${cardBg} p-8 rounded-2xl shadow-xl w-full max-w-md relative transition-colors duration-300`}>
 
-        {/* Toggle dark mode */}
         <button
           onClick={toggle}
           aria-label="Basculer thème"
           className={`absolute top-4 right-4 p-2 rounded-full text-lg transition-colors ${toggleBg}`}
-        >
-          {isDark ? '☀️' : '🌙'}
-        </button>
-
-        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>Créer un compte 🚀</h1>
-        <p className={`${subCl} mb-6`}>Commence à tracker tes calories aujourd'hui</p>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
-
-        <div className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
-            className={inputCl}
-          />
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
-            className={inputCl}
-          />
-          <input
-            type="password"
-            placeholder="Confirmer le mot de passe"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
-            className={inputCl}
-          />
-          <button
-            onClick={handleRegister}
-            disabled={loading}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition disabled:opacity-50"
-          >
-            {loading ? 'Création...' : "S'inscrire"}
-          </button>
-        </div>
-
-        <p className={`${subCl} text-center mt-6`}>
-          Déjà un compte ?{' '}
-          <Link href="/login" className={linkCl}>
-            Se connecter
-          </Link>
-        </p>
-
-      </div>
-    </div>
-  )
-}
