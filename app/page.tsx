@@ -309,7 +309,7 @@ export default function LandingPage() {
       </div>
 
       {/* ✅ TESTIMONIALS CAROUSEL — inséré ici entre Features et Testimony Band */}
-      <TestimonialsCarousel />
+      <TestimonialsCarousel lang={lang} />
 
       {/* TESTIMONY BAND */}
       <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 24px', textAlign: 'center' }}>
