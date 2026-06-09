@@ -1,5 +1,4 @@
 'use client'
-// v2
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -11,7 +10,7 @@ type Lang = 'fr' | 'en' | 'es'
 const content = {
   fr: {
     nav_login: 'Se connecter',
-    nav_start: 'Commencer  gratuitement',
+    nav_start: 'Commencer gratuitement',
     hero_tag: '🥗 Nutrition intelligente pour les 50+',
     hero_title: 'Reprenez le contrôle de votre alimentation',
     hero_sub: 'Kalorix vous aide à suivre vos calories, macros et poids au quotidien — simplement, sans prise de tête.',
@@ -132,9 +131,9 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
+    localStorage.removeItem('kalorix_lang')
     const saved = localStorage.getItem('kalorix_lang') as Lang | null
-if (saved && ['en', 'fr', 'es'].includes(saved)) setLang(saved)
-localStorage.removeItem('kalorix_lang')
+    if (saved && ['en', 'fr', 'es'].includes(saved)) setLang(saved)
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
@@ -150,11 +149,12 @@ localStorage.removeItem('kalorix_lang')
   const handleLang = (l: Lang) => { setLang(l); localStorage.setItem('kalorix_lang', l) }
   const t = content[lang]
 
- const langOptions: { code: Lang; flag: string; label: string }[] = [
+  const langOptions: { code: Lang; flag: string; label: string }[] = [
     { code: 'en', flag: '🇺🇸', label: 'English' },
     { code: 'fr', flag: '🇫🇷', label: 'Français' },
     { code: 'es', flag: '🇪🇸', label: 'Español' },
   ]
+
   const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
 
   const pageBg        = isDark ? '#0d0d1a' : '#fafbff'
