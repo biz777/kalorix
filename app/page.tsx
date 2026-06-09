@@ -149,12 +149,11 @@ export default function LandingPage() {
   const handleLang = (l: Lang) => { setLang(l); localStorage.setItem('kalorix_lang', l) }
   const t = content[lang]
 
-  const langOptions: { code: Lang; flag: string; label: string }[] = [
-    { code: 'fr', flag: '🇫🇷', label: 'Français' },
+ const langOptions: { code: Lang; flag: string; label: string }[] = [
     { code: 'en', flag: '🇺🇸', label: 'English' },
+    { code: 'fr', flag: '🇫🇷', label: 'Français' },
     { code: 'es', flag: '🇪🇸', label: 'Español' },
   ]
-
   const ff = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
 
   const pageBg        = isDark ? '#0d0d1a' : '#fafbff'
