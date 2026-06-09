@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTheme } from './providers'
+import TestimonialsCarousel from '@/components/TestimonialsCarousel'
 
 type Lang = 'fr' | 'en' | 'es'
 
@@ -210,7 +211,6 @@ export default function LandingPage() {
             {isDark ? '☀️' : '🌙'}
           </button>
 
-          {/* ✅ Bouton "Se connecter" uniquement — plus de bouton Pricing */}
           <button onClick={() => router.push('/login')}
             style={{
               background: scrolled ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(255,255,255,0.2)',
@@ -254,7 +254,6 @@ export default function LandingPage() {
             {t.hero_sub}
           </p>
 
-          {/* ✅ Un seul bouton CTA — plus de bouton Pricing */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <button onClick={() => router.push('/login')}
               style={{
@@ -309,6 +308,9 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* ✅ TESTIMONIALS CAROUSEL — inséré ici entre Features et Testimony Band */}
+      <TestimonialsCarousel />
+
       {/* TESTIMONY BAND */}
       <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 24px', textAlign: 'center' }}>
         <div style={{ fontSize: '3em', marginBottom: 16 }}>👴🏻👵🏻</div>
@@ -325,7 +327,6 @@ export default function LandingPage() {
         </h2>
         <p style={{ color: textColor, fontSize: '1em', marginBottom: 36, transition: 'color 0.3s' }}>{t.cta_sub}</p>
 
-        {/* ✅ Un seul bouton CTA — plus de bouton Pricing */}
         <button onClick={() => router.push('/login')}
           style={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -343,7 +344,6 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: `1px solid ${footerBorder}`, color: footerColor, fontSize: '0.85em', transition: 'all 0.3s' }}>
         <div style={{ marginBottom: 12, display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
-          {/* ✅ Lien Tarifs gardé en footer uniquement — discret mais accessible */}
           <button onClick={() => router.push('/pricing')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_pricing}</button>
           <button onClick={() => router.push('/terms')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_terms}</button>
           <button onClick={() => router.push('/privacy')} style={{ background: 'none', border: 'none', color: footerColor, cursor: 'pointer', fontSize: '0.85em', fontFamily: ff }}>{t.footer_privacy}</button>
