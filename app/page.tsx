@@ -10,7 +10,7 @@ type Lang = 'fr' | 'en' | 'es'
 const content = {
   fr: {
     nav_login: 'Se connecter',
-    nav_start: 'Commencer gratuitement',
+    nav_start: 'Commencer  gratuitement',
     hero_tag: '🥗 Nutrition intelligente pour les 50+',
     hero_title: 'Reprenez le contrôle de votre alimentation',
     hero_sub: 'Kalorix vous aide à suivre vos calories, macros et poids au quotidien — simplement, sans prise de tête.',
