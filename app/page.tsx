@@ -133,7 +133,8 @@ export default function LandingPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem('kalorix_lang') as Lang | null
-    if (saved && ['fr', 'en', 'es'].includes(saved)) setLang(saved)
+if (saved && ['en', 'fr', 'es'].includes(saved)) setLang(saved)
+localStorage.removeItem('kalorix_lang')
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
