@@ -128,7 +128,7 @@ const seoMeta: Record<Lang, { title: string; description: string }> = {
 export default function LandingPage() {
   const router = useRouter()
   const { isDark, toggle } = useTheme()
-  const [lang, setLang] = useState<Lang>('fr')
+  const [lang, setLang] = useState<Lang>('en')
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
