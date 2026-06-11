@@ -2,17 +2,67 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTheme } from '@/app/providers'
+import { Suspense } from 'react'
 
-export default function LoginPage() {
+type Lang = 'fr' | 'en' | 'es'
+
+const content: Record<Lang, {
+  title: string
+  sub: string
+  email: string
+  password: string
+  btn: string
+  loading: string
+  noAccount: string
+  register: string
+}> = {
+  fr: {
+    title: 'Connexion 👋',
+    sub: 'Bon retour sur Kalorix',
+    email: 'Email',
+    password: 'Mot de passe',
+    btn: 'Se connecter',
+    loading: 'Connexion...',
+    noAccount: 'Pas encore de compte ?',
+    register: "S'inscrire",
+  },
+  en: {
+    title: 'Sign in 👋',
+    sub: 'Welcome back to Kalorix',
+    email: 'Email',
+    password: 'Password',
+    btn: 'Sign in',
+    loading: 'Signing in...',
+    noAccount: 'No account yet?',
+    register: 'Sign up',
+  },
+  es: {
+    title: 'Iniciar sesión 👋',
+    sub: 'Bienvenido de nuevo a Kalorix',
+    email: 'Email',
+    password: 'Contraseña',
+    btn: 'Iniciar sesión',
+    loading: 'Iniciando sesión...',
+    noAccount: '¿Aún no tienes cuenta?',
+    register: 'Registrarse',
+  },
+}
+
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { isDark, toggle } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const rawLang = searchParams.get('lang') ?? ''
+  const lang: Lang = (['fr', 'en', 'es'].includes(rawLang) ? rawLang : 'en') as Lang
+  const t = content[lang]
 
   const handleLogin = async () => {
     setLoading(true)
@@ -26,7 +76,6 @@ export default function LoginPage() {
     }
   }
 
-  // ─── Palette ─────────────────────────────────────────────────────────────
   const pageBg   = isDark ? 'bg-gray-950'  : 'bg-gray-100'
   const cardBg   = isDark ? 'bg-gray-900'  : 'bg-white'
   const titleCl  = isDark ? 'text-white'   : 'text-gray-900'
@@ -41,17 +90,16 @@ export default function LoginPage() {
     <div className={`min-h-screen flex items-center justify-center ${pageBg} transition-colors duration-300`}>
       <div className={`${cardBg} p-8 rounded-2xl shadow-xl w-full max-w-md relative transition-colors duration-300`}>
 
-        {/* Toggle dark mode */}
         <button
           onClick={toggle}
-          aria-label="Basculer thème"
+          aria-label="Toggle theme"
           className={`absolute top-4 right-4 p-2 rounded-full text-lg transition-colors ${toggleBg}`}
         >
           {isDark ? '☀️' : '🌙'}
         </button>
 
-        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>Connexion 👋</h1>
-        <p className={`${subCl} mb-6`}>Bon retour sur Kalorix</p>
+        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>{t.title}</h1>
+        <p className={`${subCl} mb-6`}>{t.sub}</p>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-4">
@@ -62,7 +110,7 @@ export default function LoginPage() {
         <div className="space-y-4">
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t.email}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -70,7 +118,7 @@ export default function LoginPage() {
           />
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t.password}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -81,18 +129,26 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition disabled:opacity-50"
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? t.loading : t.btn}
           </button>
         </div>
 
         <p className={`${subCl} text-center mt-6`}>
-          Pas encore de compte ?{' '}
-          <Link href="/register" className={linkCl}>
-            S'inscrire
+          {t.noAccount}{' '}
+          <Link href={`/register?lang=${lang}`} className={linkCl}>
+            {t.register}
           </Link>
         </p>
 
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
