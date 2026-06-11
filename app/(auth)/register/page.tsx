@@ -7,6 +7,54 @@ import Link from 'next/link'
 import { useTheme } from '@/app/providers'
 import { Suspense } from 'react'
 
+type Lang = 'fr' | 'en' | 'es'
+
+const content: Record<Lang, {
+  title: string
+  sub: string
+  password: string
+  confirm: string
+  btn: string
+  loading: string
+  hasAccount: string
+  login: string
+  pwdMismatch: string
+}> = {
+  fr: {
+    title: 'Créer un compte 🚀',
+    sub: "Commence à tracker tes calories aujourd'hui",
+    password: 'Mot de passe',
+    confirm: 'Confirmer le mot de passe',
+    btn: "S'inscrire",
+    loading: 'Création...',
+    hasAccount: 'Déjà un compte ?',
+    login: 'Se connecter',
+    pwdMismatch: 'Les mots de passe ne correspondent pas',
+  },
+  en: {
+    title: 'Create an account 🚀',
+    sub: 'Start tracking your calories today',
+    password: 'Password',
+    confirm: 'Confirm password',
+    btn: 'Sign up',
+    loading: 'Creating...',
+    hasAccount: 'Already have an account?',
+    login: 'Sign in',
+    pwdMismatch: 'Passwords do not match',
+  },
+  es: {
+    title: 'Crear una cuenta 🚀',
+    sub: 'Empieza a registrar tus calorías hoy',
+    password: 'Contraseña',
+    confirm: 'Confirmar contraseña',
+    btn: 'Registrarse',
+    loading: 'Creando...',
+    hasAccount: '¿Ya tienes cuenta?',
+    login: 'Iniciar sesión',
+    pwdMismatch: 'Las contraseñas no coinciden',
+  },
+}
+
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -17,25 +65,19 @@ function RegisterForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const getLang = (): string => {
-    const urlLang = searchParams.get('lang')
-    if (urlLang && ['fr', 'en', 'es'].includes(urlLang)) return urlLang
-    const browserLang = navigator.language?.substring(0, 2)
-    if (['fr', 'en', 'es'].includes(browserLang)) return browserLang
-    return 'en'
-  }
+  const rawLang = searchParams.get('lang') ?? ''
+  const lang: Lang = (['fr', 'en', 'es'].includes(rawLang) ? rawLang : 'en') as Lang
+  const t = content[lang]
 
   const handleRegister = async () => {
     setLoading(true)
     setError('')
 
     if (password !== confirm) {
-      setError('Les mots de passe ne correspondent pas')
+      setError(t.pwdMismatch)
       setLoading(false)
       return
     }
-
-    const lang = getLang()
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -79,14 +121,14 @@ function RegisterForm() {
 
         <button
           onClick={toggle}
-          aria-label="Basculer thème"
+          aria-label="Toggle theme"
           className={`absolute top-4 right-4 p-2 rounded-full text-lg transition-colors ${toggleBg}`}
         >
           {isDark ? '☀️' : '🌙'}
         </button>
 
-        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>Créer un compte 🚀</h1>
-        <p className={`${subCl} mb-6`}>Commence à tracker tes calories aujourd'hui</p>
+        <h1 className={`text-3xl font-bold ${titleCl} mb-2`}>{t.title}</h1>
+        <p className={`${subCl} mb-6`}>{t.sub}</p>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-4">
@@ -105,7 +147,7 @@ function RegisterForm() {
           />
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t.password}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
@@ -113,7 +155,7 @@ function RegisterForm() {
           />
           <input
             type="password"
-            placeholder="Confirmer le mot de passe"
+            placeholder={t.confirm}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
@@ -124,14 +166,14 @@ function RegisterForm() {
             disabled={loading}
             className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition disabled:opacity-50"
           >
-            {loading ? 'Création...' : "S'inscrire"}
+            {loading ? t.loading : t.btn}
           </button>
         </div>
 
         <p className={`${subCl} text-center mt-6`}>
-          Déjà un compte ?{' '}
-          <Link href="/login" className={linkCl}>
-            Se connecter
+          {t.hasAccount}{' '}
+          <Link href={`/login?lang=${lang}`} className={linkCl}>
+            {t.login}
           </Link>
         </p>
 
@@ -142,7 +184,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
       <RegisterForm />
     </Suspense>
   )
