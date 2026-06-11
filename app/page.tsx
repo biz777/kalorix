@@ -131,7 +131,6 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    localStorage.removeItem('kalorix_lang')
     const saved = localStorage.getItem('kalorix_lang') as Lang | null
     if (saved && ['en', 'fr', 'es'].includes(saved)) setLang(saved)
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -212,7 +211,7 @@ export default function LandingPage() {
             {isDark ? '☀️' : '🌙'}
           </button>
 
-          <button onClick={() => router.push('/login')}
+          <button onClick={() => router.push(`/login?lang=${lang}`)}
             style={{
               background: scrolled ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(255,255,255,0.2)',
               color: 'white', border: scrolled ? 'none' : '1px solid rgba(255,255,255,0.5)',
@@ -256,7 +255,7 @@ export default function LandingPage() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <button onClick={() => router.push('/login')}
+            <button onClick={() => router.push(`/login?lang=${lang}`)}
               style={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 color: 'white', border: 'none', padding: '16px 48px', borderRadius: 50,
@@ -268,7 +267,7 @@ export default function LandingPage() {
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(102,126,234,0.5)' }}>
               {t.hero_cta} →
             </button>
-            <button onClick={() => router.push('/login')}
+            <button onClick={() => router.push(`/login?lang=${lang}`)}
               style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.9em', fontFamily: ff, textDecoration: 'underline', padding: 0 }}>
               {t.hero_login}
             </button>
@@ -309,7 +308,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* ✅ TESTIMONIALS CAROUSEL — inséré ici entre Features et Testimony Band */}
+      {/* TESTIMONIALS CAROUSEL */}
       <TestimonialsCarousel lang={lang} />
 
       {/* TESTIMONY BAND */}
@@ -328,7 +327,7 @@ export default function LandingPage() {
         </h2>
         <p style={{ color: textColor, fontSize: '1em', marginBottom: 36, transition: 'color 0.3s' }}>{t.cta_sub}</p>
 
-        <button onClick={() => router.push('/login')}
+        <button onClick={() => router.push(`/login?lang=${lang}`)}
           style={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             color: 'white', border: 'none', padding: '16px 48px', borderRadius: 50,
