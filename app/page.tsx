@@ -313,7 +313,7 @@ export default function LandingPage() {
 
       {/* TESTIMONY BAND */}
       <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '60px 24px', textAlign: 'center' }}>
-        <div style={{ fontSize: '3em', marginBottom: 16 }}>👴🏻👵🏻</div>
+        <div style={{ fontSize: '3em', marginBottom: 16 }}>🙋‍♂️🙋‍♀️</div>
         <h2 style={{ color: 'white', fontSize: 'clamp(1.4em, 3vw, 2em)', fontWeight: '800', margin: '0 0 12px', letterSpacing: '-0.5px' }}>
           {t.testimony_title}
         </h2>
