@@ -1,11 +1,11 @@
 {
   "crons": [
     {
-      "path": "/api/cron/keep-alive",
+      "path": "/api/keep-alive",
       "schedule": "0 8 * * *"
     },
     {
-      "path": "/api/cron/keep-alive",
+      "path": "/api/keep-alive",
       "schedule": "0 20 * * *"
     }
   ]
